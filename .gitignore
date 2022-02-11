@@ -1,0 +1,9 @@
+#pdf files
+
+*.pdf
+*.log
+*.jpeg
+*.png
+
+**/data
+
