@@ -16,7 +16,7 @@ data used for boundary conditions.
 
 ![The region surrounding Denmark, DKA, as covered by the DANRA
 reanalysis. In green: the surface station network used for DANRA data
-assimilation.](assimilation.png)
+assimilation.](https://user-images.githubusercontent.com/57238320/155008487-c4ace92b-af2b-4ea4-a429-dbc0916c0871.png)
 
 Surface observation stations as shown in Fig 1 report regularly
 throughout the whole reanalysis period from 1950 to 2020 a set of
@@ -61,7 +61,7 @@ assumptions about the coherence of the values:
 
     ![Example of an time series anomaly. We can see a sudden jump within
     the time series that is unlikely to happen in the
-    nature](Image-4.png)
+    nature](https://user-images.githubusercontent.com/57238320/155008744-1529b246-6c45-45bb-8fa0-89eebaa1dd7c.png)
 
 -   Physical coherence: Apart from the spatial coherence and the time
     coherence, we recall that we are talking about a complex and chaotic
@@ -207,14 +207,17 @@ the data which could reveal anomalies are not taken into account.
 Note o Bayes theorem
 ====================
 
+
+
 Depending on what we wish to solve Bayes can be useful in different
 ways. So far we found how using Bayes theorem we can estimate the
 probability that a measurement is correct or incorrect depending on
 different tests that will perform. Let's denote the measurement as being
-bad by \"B\" and the different tests by $T_{1}, T_{2}, T_{3} ...$. Let's
-particularize for two tests. As described in [@multiple_bayes], the
+bad by \"B\" and the different tests by <img src="https://latex.codecogs.com/svg.image?T_{1},&space;T_{2},&space;T_{3}&space;..." title="T_{1}, T_{2}, T_{3} ..." />. Let's
+particularize for two tests. The
 probability that we wish to estimate is given by bayes rule
-$$P(B| T_{1},T_{2})= \frac{ P(T_{1},T_{2} | B )P(B)}{P(T_{1},T_{2} )}$$
+
+![image1](https://latex.codecogs.com/svg.image?P(B%7C%20T_%7B1%7D,T_%7B2%7D)=%20%5Cfrac%7B%20P(T_%7B1%7D,T_%7B2%7D%20%7C%20B%20)P(B)%7D%7BP(T_%7B1%7D,T_%7B2%7D%20)%7D)
 
 This allows us to make a statistical model from samples corrected by
 Bjarne or other sources of information. Let's analyze the previous
@@ -224,32 +227,33 @@ our model for a single station we would consider that this is the amount
 of outliers in our training set station divided by the full set size in
 the station.
 
-For $P(T1,T2| B)$ and $P(T1,T2)$ we need to perform an approximation
+For <img src="https://latex.codecogs.com/svg.image?P(T1,T2|B)" title="P(T1,T2|B)" /> and <img src="https://latex.codecogs.com/svg.image?P(T1,T2)" title="P(T1,T2)" /> we need to perform an approximation
 which vality is arguable. In order to make the best use of our data, we
 assume statistical independence of the two tests. This corresponds to
 assume that a success/failure of one test is uncorrelated with the
 others. This allows us to split the numerator conditional probability as
-follows $$P(T1,T2| B) = P(T1|B)P(T2|B)$$
+follows <img src="https://latex.codecogs.com/svg.image?P(T1,T2|&space;B)&space;=&space;P(T1|B)P(T2|B)" title="P(T1,T2| B) = P(T1|B)P(T2|B)" />
 
 For the last term, we make use of the normalization condition and asume
 that a data point is either good (G) or bad:
-$$1 = P(B| T_{1},T_{2}) + P(G| T_{1},T_{2}) =  \frac{ P(T_{1},T_{2} | B )P(B)}{P(T_{1},T_{2} )} + \frac{ P(T_{1},T_{2} | G )P(G)}{P(T_{1},T_{2} )} \Longrightarrow$$
-$$P(T1,T2) =   P(T_{1},T_{2} | B )P(B) + P(T_{1},T_{2} | G )P(G)$$
+
+<img src="https://latex.codecogs.com/svg.image?1&space;=&space;P(B|&space;T_{1},T_{2})&space;&plus;&space;P(G|&space;T_{1},T_{2})&space;=&space;&space;\frac{&space;P(T_{1},T_{2}&space;|&space;B&space;)P(B)}{P(T_{1},T_{2}&space;)}&space;&plus;&space;\frac{&space;P(T_{1},T_{2}&space;|&space;G&space;)P(G)}{P(T_{1},T_{2}&space;)}&space;\Longrightarrow" title="1 = P(B| T_{1},T_{2}) + P(G| T_{1},T_{2}) = \frac{ P(T_{1},T_{2} | B )P(B)}{P(T_{1},T_{2} )} + \frac{ P(T_{1},T_{2} | G )P(G)}{P(T_{1},T_{2} )} \Longrightarrow" />
+<img src="https://latex.codecogs.com/svg.image?P(T1,T2)&space;=&space;&space;&space;P(T_{1},T_{2}&space;|&space;B&space;)P(B)&space;&plus;&space;P(T_{1},T_{2}&space;|&space;G&space;)P(G)" title="P(T1,T2) = P(T_{1},T_{2} | B )P(B) + P(T_{1},T_{2} | G )P(G)" />
 
 Plugging this in the previous equation we get an estimation of the
 probability of a point being outlier if flagged by the tests:
 
-$$\boxed{P(B| T_{1},T_{2})= \frac{ P(T1|B)P(T2|B)P(B)}{P(T1|B)P(T2|B)P(B) + P(T1|G)P(T2|G)P(G) }}$$
+<img src="https://latex.codecogs.com/svg.image?\boxed{P(B|&space;T_{1},T_{2})=&space;\frac{&space;P(T1|B)P(T2|B)P(B)}{P(T1|B)P(T2|B)P(B)&space;&plus;&space;P(T1|G)P(T2|G)P(G)&space;}}" title="\boxed{P(B| T_{1},T_{2})= \frac{ P(T1|B)P(T2|B)P(B)}{P(T1|B)P(T2|B)P(B) + P(T1|G)P(T2|G)P(G) }}" />
 
 It is possible to generalise this expression to the case of an arbitrary
 set of N statistically independent tests:
-$$P(B|T_{1},..., T_{N}) =.\frac{P(B) \prod_{i}^{N} P(T_{i}|B)}{P(B) \prod_{i}^{N} P(T_{i}|B)+P(G) \prod_{i}^{N} P(T_{i}|G)}$$
+<img src="https://latex.codecogs.com/svg.image?P(B|T_{1},...,&space;T_{N})&space;=.\frac{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)}{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)&plus;P(G)&space;\prod_{i}^{N}&space;P(T_{i}|G)}" title="P(B|T_{1},..., T_{N}) =.\frac{P(B) \prod_{i}^{N} P(T_{i}|B)}{P(B) \prod_{i}^{N} P(T_{i}|B)+P(G) \prod_{i}^{N} P(T_{i}|G)}" />
 
 In order to get a good estimator of new incoming data we need to
 evaluate the probability of a positive test on ground truth cases
 provided by Bjarne. However this is not straight as our tests perform
 differently under different circumstances. We need to study how the
-tests correlate to the observation, hence $P(T_{i}|B)$, depending on
+tests correlate to the observation, hence <img src="https://latex.codecogs.com/svg.image?P(T_{i}|B)" title="P(T_{i}|B)" />, depending on
 external parameters such as, in a spatial correlation test, the distance
 or the wind exposure.
 
