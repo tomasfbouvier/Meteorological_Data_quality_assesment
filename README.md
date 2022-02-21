@@ -113,7 +113,7 @@ is the outlier probability evaluated from the probability distribution
 are the variables that make the differences between anomaly detection
 methods.
 
-According to [@old_article] If we pay attention to the points that are
+If we pay attention to the points that are
 used for detection we can identify three types of modelling:
 
 -   Type I: **No prior knowledge of the outliers**(equivalent to
@@ -152,59 +152,7 @@ yet to be discovered. For this reason, of the three approaches mentioned
 above, it seems that the we will explore mainly the first.
 ]{style="color: blue"}
 
-Examples of previous attempts on quality control at DMI 
-=======================================================
-
-Alessandro's thesis
--------------------
-
-An example of how the biases commented above are applied in a quality
-control can be found in a previous thesis written at DMI
-[@Alessandro; @thesis]. The author discards and corrects the data in two
-ways:
-
--   Buddy check (spatial correlation): This is a very simple baseline
-    for data consistency assurance. The idea is to subdivide the domain
-    of study into little parcels. We calculate the mean and standard
-    deviation of the of points in each parcel. Any point that deviates
-    more than N standard deviations from the mean of its parcel is
-    considered as outlier and hence discarded. Of course this very
-    simple check has many disadvantages such as the dependence on many
-    hyper-parameters or the different density of points in each parcel.
-
--   Offset correction (spatial correlation): An offset for each station
-    (NETATMO) in the database by time-series comparison with a closest
-    more accurate weather station (SYNOP). The offset is used for
-    correcting afterwards the whole time-series. This again simple
-    correction is equivalent to make an estimation of the average error
-    and supress it but doesn't take into account higher moments of the
-    error probability distribution.
-
-Bjarne's work
--------------
-
-Bjarne spends time everyday correcting data from different SYNOP
-stations. He discards and corrects data by eye. The simplest outlier
-detection that Bjarne performs is based on comparing the data with the
-rest of the time-series. If there are sudden jumps of big size in
-temperature (for example 20 K within 3 hours) then it is likely that
-this will be an outlier and be discarded. Comparisons with an accurate
-model prediction allow to flag offsets that can afterwards be corrected.
-Furthermore, it is possible to compare by eye a station with nearby ones
-while there are many additional factors to take into account when
-performing it. Bjarne also corrects measurements of preassure that can
-be missing or buffr to DMI database extraction errors.
-
-In general, manual anomaly detection is accurate but requires a
-scientist to dedicate an insane amount of time and effort to the task,
-as the amount of data and factors affecting the quality is giant. With
-this amount increasing exponentially it will soon be impossible to do
-this by hand. Moreover this is an intuitive anomaly detection, not based
-on any statistics but on knowledge and priors that the researcher has on
-the data he is working with. It is likely that many hidden features in
-the data which could reveal anomalies are not taken into account.
-
-Note o Bayes theorem
+A Bayeysian framework for merging multiple test evidences
 ====================
 
 
@@ -257,7 +205,7 @@ tests correlate to the observation, hence <img src="https://latex.codecogs.com/s
 external parameters such as, in a spatial correlation test, the distance
 or the wind exposure.
 
-Refferences
+References
 ====================
 
 A Survey of Outlier Detection Methodologies.Victoria J. Hodge
