@@ -5,5 +5,5 @@
 *.jpeg
 *.png
 
-**/data
+#**/data
 
