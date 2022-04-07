@@ -94,12 +94,11 @@ def build_pdfs(station,  thr=0.1, df=df):
             pdfs.append(create_probability(station,target_station,df))
             f2s.append(create_sets(target_station, df)[1])
             
-            
         except:
             pdfs.append(None)
     
     if(len(correlated_stations)==0):
-        print('no stations in the range ')
+        print('no stations in the range')
     def evaluate_point(x, y, thr, r=r):
         """
         Parameters
@@ -116,20 +115,22 @@ def build_pdfs(station,  thr=0.1, df=df):
         for i in range(len(correlated_stations)):
             #_, f2= create_sets(correlated_stations[i], df)
 
-            diff=y-f2s[i](x)
+            diff=f2s[i](x)-y
             
             try:
-                output_prob += pdfs[i].evaluate(diff)*(r[i])
+                output_prob += pdfs[i].evaluate(diff)*(r[i])**2
             except:
                 r=np.delete(r, i)
             
         output_prob/=sum(r)
         # I DON'T KNOW IF THIS IS THE PROBABILITY THAT MAKES SENSE 
         
+       # return output_prob
+              
         if (output_prob<thr):
             return True
         else:
             return False
-    
+        
     return evaluate_point, correlated_stations
 
