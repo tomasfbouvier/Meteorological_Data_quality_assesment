@@ -27,14 +27,14 @@ def get_stations(station, radius):
         
     lon= df3[df3['station']==station]['lon'].to_numpy()[0]
     lat= df3[df3['station']==station]['lat'].to_numpy()[0]    
-    stations_in_range = df3[df3['lat'] > lat-radius ][df3['lat'] < lat+radius][df3['lon'] < lon+radius][df3['lon'] > lon-radius]
+    stations_in_range = df3 #df3[df3['lat'] > lat-radius ][df3['lat'] < lat+radius][df3['lon'] < lon+radius][df3['lon'] > lon-radius]
     return stations_in_range
     
     
 #print(get_stations(6096, 1))
       
 def prepare_test(station):
-    surrounds=get_stations(station, 1000)
+    surrounds= df3 #get_stations(station, 1000)
     #values= []
     points= []
     fs=[]

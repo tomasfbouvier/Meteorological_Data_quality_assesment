@@ -14,7 +14,7 @@ import numpy as np
 def my_buddy_check(station):    
     max_elev_diff = -1 #200
     elev_gradient = -0.0065
-    num_iterations = 50
+    num_iterations = 1
     xs, _ = create_sets(station)
 
     fs, points, obs_to_check = prepare_test(station)
