@@ -152,7 +152,7 @@ yet to be discovered. For this reason, of the three approaches mentioned
 above, it seems that the we will explore mainly the first.
 ]{style="color: blue"}
 
-A Bayeysian framework for merging multiple test evidences
+A Bayesian framework for merging multiple test evidences
 ====================
 
 
