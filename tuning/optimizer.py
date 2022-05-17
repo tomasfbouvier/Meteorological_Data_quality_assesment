@@ -27,7 +27,7 @@ def optimize_test(station, name, std, plot=True):
         pbounds = {'p0': (.5,.6),'p1': (0.,3.), 'p2': (30000, 100000)}
         test= my_buddy_check(station)
     elif(name=='SCT'):
-        pbounds = {'p0': (0.,6.),'p1': (0.,6.), 'p2': (0, 100000), 'p3':(0, 100000)}
+        pbounds = {'p0': (0.,6.),'p1': (0.,6.), 'p2': (0, 100000), 'p3':(0, 200000)}
         test= my_SCT(station)
     elif(name=='build_pdfs'):
         pbounds = {'p0': (0., 1.)}
@@ -59,7 +59,7 @@ def optimize_test(station, name, std, plot=True):
                 return J
         elif(name=='SCT'):
             def aux(p0,p1,p2,p3):
-                params=[p0,p1,p2, p2+p3]
+                params=[p0,p1,p2, p3]
                 confusion_matrix= calculate_acc(x,f,test, params,1000, std)
                 #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.98 
                 J=(confusion_matrix[0,0]+confusion_matrix[1,1])/(sum(sum(confusion_matrix)))
