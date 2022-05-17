@@ -139,5 +139,5 @@ def build_pdfs(station,  thr=0.1, df=df):
         else:
             return False
         
-    return evaluate_point, correlated_stations
+    return evaluate_point
 
