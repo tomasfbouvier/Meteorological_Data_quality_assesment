@@ -18,6 +18,7 @@ from tuning.benchmark import calculate_acc
 from tests.TCT import time_consistency_test
 from tests.SCT import build_pdfs
 from tests.my_titanlib import my_buddy_check, my_SCT
+from tests.newAR import AR_test
 import matplotlib.pyplot as plt
 
 
@@ -31,12 +32,14 @@ def optimize_test(station, name, std, plot=True):
         test= my_SCT(station)
     elif(name=='build_pdfs'):
         pbounds = {'p0': (0., 1.)}
-        test,_ = build_pdfs(station)
+        test = build_pdfs(station)
     
     elif(name=='DBSCAN'):
         pbounds = {'p0': (0.0001, 2.), 'p1':  (0.0001, 2.)}
         test= time_consistency_test(station)
-        
+    elif(name=='AR'):
+        pbounds = {'p0': (0., 10.)}
+        test= AR_test(station)
         
     else:
         print('wrong name 1')
@@ -66,10 +69,10 @@ def optimize_test(station, name, std, plot=True):
                 if plot==True:
                     plt.plot(confusion_matrix[1,0], confusion_matrix[0,0], c, label=label)
                 return J
-        elif(name=='build_pdfs'):
+        elif(name=='build_pdfs' or name== 'AR'):
             def aux(p0):
                 params=[p0] 
-                confusion_matrix= calculate_acc(x,f,test, params,1000, std)
+                confusion_matrix= calculate_acc(x,f,test, params,200, std)
                 #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.98 
                 J=(confusion_matrix[0,0]+confusion_matrix[1,1])/(sum(sum(confusion_matrix)))
                 if plot==True:
@@ -84,6 +87,8 @@ def optimize_test(station, name, std, plot=True):
                 if plot==True:
                     plt.plot(confusion_matrix[1,0], confusion_matrix[0,0], c, label=label)
                 return J
+            
+            
         else:
             print('wrong name 2')
             return 

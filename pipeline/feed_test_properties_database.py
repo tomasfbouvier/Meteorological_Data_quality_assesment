@@ -13,13 +13,14 @@ from tuning.optimizer import optimize_test
 from preprocessing.create_sets import create_sets
 from tests.SCT import build_pdfs
 from tests.my_titanlib import my_SCT, my_buddy_check
+from tests.newAR import AR_test
 
 import pandas as pd
 
 
 df=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl") 
 
-path_test_properties= '../data/test_properties/'
+path_test_properties= '../data_files/test_properties/'
 
 
 def feed_test_properties_database(test_names, std, stations=df['station'].unique()):
@@ -52,6 +53,8 @@ def feed_test_properties_database(test_names, std, stations=df['station'].unique
                         test= my_SCT(station)
                     elif test_name == 'buddy_check':
                         test= my_buddy_check(station)
+                    elif test_name == 'AR':
+                        test= AR_test(station)
             
                     acc= calculate_acc(xs, f, test,list(best['params'].values())
                     , std=std, n_trials=10000)

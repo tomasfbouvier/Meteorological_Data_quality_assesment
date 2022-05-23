@@ -18,7 +18,7 @@ def divide(x):
     return int(x/100)
 
 
-df3= pd.DataFrame(np.loadtxt('../data/SynopFrIngres'),columns=['station', 'init', 'end', 'lat', 'lon', 'height'])
+df3= pd.DataFrame(np.loadtxt('../data_files/data/SynopFrIngres'),columns=['station', 'init', 'end', 'lat', 'lon', 'height'])
 df3['station']= df3['station'].apply(divide)
 df3= df3.drop_duplicates(subset='station')
 
