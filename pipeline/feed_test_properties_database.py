@@ -18,12 +18,11 @@ from tests.newAR import AR_test
 import pandas as pd
 
 
-df=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl") 
-
+#
 path_test_properties= '../data_files/test_properties/'
 
 
-def feed_test_properties_database(test_names, std, stations=df['station'].unique()):
+def feed_test_properties_database(test_names, std, stations):
     
     file_name= path_test_properties+'test_properties_'+str(std).replace('.','_')+ '.csv'
     
@@ -44,20 +43,21 @@ def feed_test_properties_database(test_names, std, stations=df['station'].unique
             try:
                 if( not len(test_properties[test_properties['test_name']==test_name]
                             [test_properties['station']==station])):
-                    xs, f = create_sets(station)
+                    
                     best=optimize_test(station, test_name, std, plot=False)
             
                     if test_name == 'build_pdfs':
-                        test= build_pdfs(station)[0]
+                        test= build_pdfs(station, df='test')[0]
                     elif test_name == 'SCT':
-                        test= my_SCT(station)
+                        test= my_SCT(station, df='test')
                     elif test_name == 'buddy_check':
-                        test= my_buddy_check(station)
+                        test= my_buddy_check(station, df='test')
                     elif test_name == 'AR':
-                        test= AR_test(station)
-            
+                        test= AR_test(station, 'test')
+                    
+                    xs, f = create_sets(station, 'test')
                     acc= calculate_acc(xs, f, test,list(best['params'].values())
-                    , std=std, n_trials=10000)
+                    , std=std, n_trials=2000)
                     
                     print(list(best['params'].values()),acc)
                     test_properties= test_properties.append({'station': station , 

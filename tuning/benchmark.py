@@ -46,10 +46,10 @@ def calculate_acc(x, f, test, params, n_trials= 100, std=1.5):
         
         # Explored ranges: >4.5, >3.5, >2.5, >1.5
         
-        out= np.random.rand()-1. #2*std*np.random.rand()-std
+        out= 2.*np.random.rand()-1. #2*std*np.random.rand()-std
         
         if(out<0.):
-            out=-std
+            out-=std
         else:
             out=+std 
         return i, out

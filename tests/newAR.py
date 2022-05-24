@@ -36,12 +36,14 @@ def fit_AR(ys):
 
     return ar_model_past, ar_model_future, mod
 
-def AR_test(station):
-    xs, f= create_sets(station)
+def AR_test(station,df_name):
+    xs, f= create_sets(station, 'train')
     ys= f(xs)
     
     ar_model_past2, ar_model_fut2, mod= fit_AR(ys)
-    
+    del(xs, f, ys)
+    xs,f= create_sets(station, df_name)
+    ys=f(xs)
     def evaluate_point(x, y, thr):
         i_trgt= np.where(x==xs)[0][0]
         if(i_trgt<int(len(mod.ar_lags))):
@@ -78,10 +80,9 @@ def AR_test(station):
         else:
             return False
     return evaluate_point
-
 """
-test=AR_test(6096)
-xs,f=create_sets(6096)
+test=AR_test(4201, 'test')
+xs,f=create_sets(4201, 'test')
 
 plt.figure()
 
@@ -96,7 +97,6 @@ for x in xs:
             plt.plot(x,f(x), 'r.')
         else:
             plt.plot(x,f(x),'b.')
-
 """
 """
 print('r_past: ', pearsonr(y[1:], pred_past[1:]) )

@@ -36,7 +36,7 @@ def get_stations(station, radius):
     
 #print(get_stations(6096, 1))
       
-def prepare_test(station):
+def prepare_test(station, df=None):
     surrounds= df3 #get_stations(station, 1000)
     #values= []
     points= []
@@ -44,7 +44,7 @@ def prepare_test(station):
     obs_to_check=[]
     for station1 in surrounds['station']:
         try:
-            x,f= create_sets(station1)
+            x,f= create_sets(station1, df)
             #values.append(f(time_stamp).tolist())
             fs.append(f)
             points.append(df3[df3['station']==station1].to_numpy()[0,3:].tolist())

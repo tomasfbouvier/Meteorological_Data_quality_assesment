@@ -51,10 +51,10 @@ except:
            
            stations_correlations[i,j]= max(correlate_signals(stations[i],stations[j], 10000)
     )
-def create_probability(station,target_station, df=df):
+def create_probability(station,target_station, df_name=None):   
     
-    x1, f1= create_sets(station, df)
-    x2, f2= create_sets(target_station, df)
+    x1, f1= create_sets(station, df_name)
+    x2, f2= create_sets(target_station, df_name)
     
     diff=[]
     
@@ -62,7 +62,7 @@ def create_probability(station,target_station, df=df):
         diff.append(f2(x)-f1(x))
     return gaussian_kde(diff)
 
-def build_pdfs(station,  thr=0.1, df=df):
+def build_pdfs(station,  thr=0.1, df_name=None):
     """
     Parameters
     ----------
@@ -76,6 +76,7 @@ def build_pdfs(station,  thr=0.1, df=df):
         - correlated stations: ID list of the stations used for the computation 
     """
     
+    df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_" +df_name+".pkl")
     stations= df['station'].unique()[:]
     
     
@@ -98,8 +99,8 @@ def build_pdfs(station,  thr=0.1, df=df):
     f2s=[]
     for target_station in correlated_stations:
         try:
-            pdfs.append(create_probability(station,target_station,df))
-            f2s.append(create_sets(target_station, df)[1])
+            pdfs.append(create_probability(station,target_station,'train'))
+            f2s.append(create_sets(target_station, 'train')[1])
             
         except:
             pdfs.append(None)

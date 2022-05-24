@@ -16,11 +16,11 @@ from tests.my_titanlib import my_SCT, my_buddy_check
 from tests.newAR import AR_test
 import ast
 
-path_test_properties= '../data_files/test_properties/'
+path_test_properties= '../data_files/test_properties2/'
 
 
 
-def multi_test(std, station):
+def multi_test(std, station, df):
     
     file_name= path_test_properties+'test_properties_'+str(std).replace('.','_')+ '.csv'    
     
@@ -40,7 +40,7 @@ def multi_test(std, station):
         test_name= test_properties.iloc[i]['test_name']
         if test_name == 'build_pdfs':
             params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
-            test= build_pdfs(station)
+            test= build_pdfs(station, df= df)
         elif test_name == 'SCT':
             params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
 
@@ -80,13 +80,15 @@ def multi_test(std, station):
     
     
     return aux
-
+"""
 import matplotlib.pyplot as plt
 from preprocessing.create_sets import create_sets
-xs,f= create_sets(4207)
-aaa= multi_test(3.5,4207)
-bbb= AR_test(4207)
 
+df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")
+xs,f= create_sets(4207)
+aaa= multi_test(3.5,4207, df)
+bbb= AR_test(4207)
+"""
 """
 for i in range(len(xs)):
     x= xs[i]; y= f(x);
@@ -100,11 +102,11 @@ for i in range(len(xs)):
     else:
         plt.plot(x, y, 'b.')
 """
-
+"""
 for i in range(len(xs)):
     x= xs[i]; y= f(x);
     if(aaa(x,y, printer=False)>0.9):
         plt.plot(x, y, 'k.')
     else:
         plt.plot(x, y, 'b.')
-
+"""

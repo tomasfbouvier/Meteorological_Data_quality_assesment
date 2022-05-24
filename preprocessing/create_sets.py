@@ -12,12 +12,12 @@ sys.path.insert(0, '..')
 from scipy.interpolate import interp1d
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-#Esto no deberia estar aquí
 
-df=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
+df_full=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
+df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
+df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl")  
 
-def create_sets(station, df=df):
+def create_sets(station, df=None):
     """
     Parameters
     ----------
@@ -29,9 +29,18 @@ def create_sets(station, df=df):
         - x: Time stamps of the station 
         - f: Cubic spline closure to get the y value by interpolation at any given time.  
     """
+    
+    if (df=='train'):
+        df= df_train
+    elif(df=='test'):
+        df= df_test
+    else:
+        df= df_full
     df2=df[df['station']==station].copy()
     
     df2.replace(0, np.nan, inplace=True)
+    
+    df2.sort_values(by='timestamp', inplace=True)
     
     mean= np.mean(df2['max'].to_numpy())
     std= np.std(df2['max'].to_numpy())
@@ -44,17 +53,8 @@ def create_sets(station, df=df):
     x=df2['timestamp']
     y=df2['max']
 
-    x = x.to_numpy('float64')
-    y = y.to_numpy('float64')
-
-    X = np.array([x,y])
-    X= X.T
-    
-    X=X[X[:, 0].argsort()]
-    
-    x= X[:,0]
-    y= X[:,1]
-    
+    x = x.to_numpy('datetime64[h]')
+    y = y.to_numpy()
 
 
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )

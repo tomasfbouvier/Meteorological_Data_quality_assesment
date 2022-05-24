@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 12 12:22:58 2022
+
+@author: tobou
+"""
+
+import matplotlib.pyplot as plt
+import numpy.random as rand
+
+
+seed= 0.1*rand.randn(200000)
+
+plt.hist(seed, bins=1000, alpha=0.5, density=True)
+
+seed_pos=[]; seed_neg=[]
+for i in range(len(seed)):
+    outlier=rand.randn()
+    seed[i]+= outlier
+    if (abs(seed[i])> .2 ):
+        seed_pos.append(seed[i])
+    else:
+        seed_neg.append(seed[i])
+#plt.hist(seed, bins=1000, alpha=0.5, density=True)
+plt.hist(seed_pos, bins=1000, alpha=0.5, density=True)
+plt.hist(seed_neg, bins=1000, alpha=0.5, density=True)
+

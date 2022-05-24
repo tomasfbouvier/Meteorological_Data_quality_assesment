@@ -26,20 +26,20 @@ def optimize_test(station, name, std, plot=True):
     
     if(name=='buddy_check'):
         pbounds = {'p0': (.5,.6),'p1': (0.,3.), 'p2': (30000, 100000)}
-        test= my_buddy_check(station)
+        test= my_buddy_check(station, df='train')
     elif(name=='SCT'):
         pbounds = {'p0': (0.,6.),'p1': (0.,6.), 'p2': (0, 100000), 'p3':(0, 200000)}
-        test= my_SCT(station)
+        test= my_SCT(station, df='train')
     elif(name=='build_pdfs'):
         pbounds = {'p0': (0., 1.)}
-        test = build_pdfs(station)
+        test = build_pdfs(station, df='train')
     
     elif(name=='DBSCAN'):
         pbounds = {'p0': (0.0001, 2.), 'p1':  (0.0001, 2.)}
-        test= time_consistency_test(station)
+        test= time_consistency_test(station, df='train')
     elif(name=='AR'):
         pbounds = {'p0': (0., 10.)}
-        test= AR_test(station)
+        test= AR_test(station, 'train')
         
     else:
         print('wrong name 1')
@@ -48,7 +48,7 @@ def optimize_test(station, name, std, plot=True):
     
     bounds_transformer = SequentialDomainReductionTransformer()
 
-    x, f = create_sets(station)
+    x, f = create_sets(station, df='train')
     
     def calculate_J(std, c='b.',label=None):
         if(name=='buddy_check'):
@@ -103,8 +103,8 @@ def optimize_test(station, name, std, plot=True):
     )
 
     optimizer.maximize(
-        init_points=10,
-        n_iter=50,
+        init_points=15,
+        n_iter=20,
     )
     # TODO: consider add different number of trials for random exploration depending on number of hyperparams 
         #print(calculate_acc(x,f,test, [optimizer.max['params']['p0'],optimizer.max['params']['p1'],optimizer.max['params']['p2']],1000, stds[i]))

@@ -15,44 +15,53 @@ sys.path.insert(0, '..')
 
 
 
-def aux_df(name, dirname, columns):
+def aux_df(name, dirname, columns, start=None, end=None):
 
     df= pd.read_table(name, dtype=float, header=None, names= columns,sep='\s+').fillna(np.nan)
     df['timestamp'] = pd.to_datetime(df['timestamp'], format='%Y%m%d%H%M')
-    #df.describe()
-    #df['station'].unique()
+    if(start):
+        df= df[df['timestamp']>=start]
+    elif(end):
+        df= df[df['timestamp']<=end]
     df['file_type']= dirname
-    #print(df)
-
     return df
 
 
 
-def Create_df(variable):
+def Create_df(variable, start=None, end=None):
     df=pd.DataFrame();
     
     if(variable== 'Press'):
         columns=['station','timestamp','min', 'max']
     if(variable== 't2m'):
         columns=['station','timestamp','min', 'max', 'staturation']
-    for dirname, _, filenames in os.walk('../data_files/data'):
+    for dirname, _, filenames in os.walk('/home/tobou/data'):
         for filename in filenames:
-            if str(variable) in filename:
-                
-                df2=aux_df(str(dirname+'/'+filename), dirname, columns=columns)
-                df=df.append(df2, ignore_index=True)
-        
-    
-    
             
-    
-    
-    df_true= df[df['file_type']=='../data_files/data/Carra'] # Corrected data from Bjarne
-    
-    df=df[df['file_type']=='../data_files/data/data1/combined']
-    print(df)
+            try:
+                datetime_str= filename.split('.', 1)[0]
+                if(int(datetime_str[0:2])<23):
+                    date=np.datetime64('20'+datetime_str[0:2]+'-'+datetime_str[2:4]+'-'+datetime_str[4:])
+                else:
+                    date=np.datetime64('19'+datetime_str[0:2]+'-'+datetime_str[2:4]+'-'+datetime_str[4:])
+
+                if(str(variable) in filename):
+                    if(start and date<start):
+                        continue
+                    elif(end and date>end):
+                        continue
+                    print(filename)
+                    df2=aux_df(str(dirname+'/'+filename), dirname, columns, start, end)
+                    df=df.append(df2, ignore_index=True)
+            except:
+                pass                       
+            
+            
+    #df_true= df[df['file_type']=='../data_files/data/Carra'] # Corrected data from Bjarne
+    df=df[df['file_type']=='/home/tobou/data/combined']
+
     return df
 
-df=Create_df('Press')
-df.to_pickle("df.pkl")  
-print(df)
+
+
+Create_df('Press', start=np.datetime64('1997-01-01'), end=np.datetime64('1997-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl')
