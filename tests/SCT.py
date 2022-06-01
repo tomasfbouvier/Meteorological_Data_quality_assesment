@@ -6,139 +6,111 @@ sys.path.insert(0, '..')
 
 from scipy.stats import gaussian_kde
 import pandas as pd
-import scipy.signal as signal
+
 from preprocessing.create_sets import create_sets
 import numpy as np
-
-df=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
-def correlate_signals(station1, station2, num=100000):  
-    """
-    Parameters
-    ----------
-        - (station1,station2): pair of stations for which the correlation score is to be computed
-        - num: length of the arrays created by interpolation of the stations time-series. Default=100000 points.    
-    Otuputs
-    -------
-        - lags
-    """
-
-    
-    x1, f1= create_sets(station1)
-    x2, f2= create_sets(station2)
-    
-    xrange=np.linspace(max(min(x1),min(x2)), min(max(x1),max(x2)), num)
-    
-    a= f1(xrange)
-    b= f2(xrange)
-
-    a= (a - np.mean(a)) / (np.std(a) * num)
-    b= (b - np.mean(b)) / (np.std(b) * num)
-    corr = signal.correlate(a,b)
-    corr*=len(a) #Does this make sense?
-    #lags = signal.correlation_lags(len(a), len(b))
-    
-    return corr
-
-stations=df['station'].unique()
+from test_base_class import Test
 
 try:
-    stations_correlations= np.loadtxt('../tests/stations_correlations.csv')
+    stations_correlations= np.loadtxt('../data_files/test_properties/stations_correlations.csv')
 except:
-    print('recalculating stations_correlations')
-    stations_correlations= np.zeros((len(stations),len(stations)))
-    for i in range(len(stations)):
-       for j in range(len(stations)):
-           
-           stations_correlations[i,j]= max(correlate_signals(stations[i],stations[j], 10000)
-    )
-def create_probability(station,target_station, df_name=None):   
-    
-    x1, f1= create_sets(station, df_name)
-    x2, f2= create_sets(target_station, df_name)
-    
-    diff=[]
-    
-    for x in x1:
-        diff.append(f2(x)-f1(x))
-    return gaussian_kde(diff)
+    print('station correlations file doesn´t exist')
 
-def build_pdfs(station,  thr=0.1, df_name=None):
-    """
-    Parameters
-    ----------
-        - station: station id from which to build the test
-        - thr: score below which a station is labelled as outlier
-        - df: dataframe used in the pdf computation
-        
-    Output
-    -------
-        - evaluate point: closure function that calculates the tests result
-        - correlated stations: ID list of the stations used for the computation 
-    """
-    
-    df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_" +df_name+".pkl")
-    stations= df['station'].unique()[:]
-    
-    
-    station_index= np.where(stations == station)[0][0]
-    r_thr=1.
-    correlated_stations= []
-    
-    r=[]
 
-    while(r_thr>0.9 and len(correlated_stations)<11):
-        correlated_stations= stations[stations_correlations[station_index,:]>r_thr]
-        r= stations_correlations[station_index,stations_correlations[station_index,:]>r_thr]
-        
-        r_thr-=1e-5
-        
-    correlated_stations=np.delete(correlated_stations, np.where(correlated_stations == station) )
-    r=np.delete(r, np.where(r == 1.) )
+class STCT(Test):
     
-    pdfs=[]
-    f2s=[]
-    for target_station in correlated_stations:
-        try:
-            pdfs.append(create_probability(station,target_station,'train'))
-            f2s.append(create_sets(target_station, 'train')[1])
+    pbounds = {'p0': (0., 1.)}
+    
+    def create_probability(self,target_station, df_name=None):   
+        
+        x1, f1= create_sets(self.station, df_name)
+        x2, f2= create_sets(target_station, df_name)
+        
+        diff=[]
+        
+        for x in x1:
+            diff.append(f2(x)-f1(x))
+        return gaussian_kde(diff)
+
+    def build_pdfs(self, df_name, thr=0.1):
+        """
+        Parameters
+        ----------
+            - station: station id from which to build the test
+            - thr: score below which a station is labelled as outlier
+            - df: dataframe used in the pdf computation
             
-        except:
-            pdfs.append(None)
+        Output
+        -------
+            - evaluate point: closure function that calculates the tests result
+            - correlated stations: ID list of the stations used for the computation 
+        """
+        
+        df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_" +df_name+".pkl")
+        stations= df['station'].unique()[:]
+        
+        station_index= np.where(stations == self.station)[0][0]
+        r_thr=1.
+        
+        correlated_stations=[]
     
-    if(len(correlated_stations)==0):
-        print('no stations in the range')
-    def evaluate_point(x, y, thr, r=r):
+        while(r_thr>0.9 and len(correlated_stations)<11):
+            correlated_stations= stations[stations_correlations[station_index,:]>r_thr]
+
+            r_thr-=1e-5
+            
+        correlated_stations=np.delete(correlated_stations, np.where(correlated_stations == self.station) )
+        
+        self.correlated_stations= dict.fromkeys(correlated_stations)
+        
+        for target_station in self.correlated_stations.keys():
+            try:
+                self.correlated_stations[target_station] = {
+                    'pdf' : self.create_probability(target_station,'train'),
+                    'f' : create_sets(target_station, 'test')[1],
+                    'r': stations_correlations[np.where(stations == self.station)[0][0],np.where(stations == target_station)[0][0]]}
+            except:
+                pass
+        self.sum_r= sum([aux['r'] for aux in self.correlated_stations.values() if aux])
+        return
+
+    def evaluate(self, x, y, params):
         """
         Parameters
         ----------
             - (x,y): point coordinates in the time series of the station being analyzed
             - thr: score below which a station is labelled as outlier
-            - r: correlation scores list
   
         Output
         -------
             - Boolean: test result (True/False)
         """
         output_prob=0.
-        for i in range(len(correlated_stations)):
+        for target_station in self.correlated_stations:
             #_, f2= create_sets(correlated_stations[i], df)
 
-            diff=f2s[i](x)-y
-            
+            diff=self.correlated_stations[target_station]['f'](x)-y
             try:
-                output_prob += pdfs[i].evaluate(diff)*(r[i])**2
+                output_prob+= self.correlated_stations[target_station]['pdf'].evaluate(diff)*self.correlated_stations[target_station]['r']
             except:
-                r=np.delete(r, i)
-            
-        output_prob/=sum(r)
+                pass
+        output_prob/= self.sum_r
+        
         # I DON'T KNOW IF THIS IS THE PROBABILITY THAT MAKES SENSE 
         
        # return output_prob
               
-        if (output_prob<thr):
+        if (output_prob<params['p0']):
             return True
         else:
             return False
         
-    return evaluate_point
+        
 
+test= STCT(6096)
+#%%
+#test.fit('train')
+test.build_pdfs('train')
+
+#%%
+test.optimize_test(1.5)

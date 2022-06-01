@@ -13,13 +13,13 @@ from tests.helper_functions_titanlib import prepare_test
 import titanlib
 import numpy as np
 
-def my_buddy_check(station, df=None):    
+def my_buddy_check(station, df_name=None):    
     max_elev_diff = -1 #200
     elev_gradient = -0.0065
     num_iterations = 1
     xs, _ = create_sets(station)
 
-    fs, points, obs_to_check = prepare_test(station, df)
+    fs, points, obs_to_check = prepare_test(station, df_name)
     i= obs_to_check.index(1)
 
     def aux_buddy_check(x,y,params):
@@ -37,7 +37,7 @@ def my_buddy_check(station, df=None):
         return aux
     return aux_buddy_check
 
-def my_SCT(station, df=None):    
+def my_SCT(station, df_name=None):    
     num_min = 5
     num_max = 100
     num_iterations = 1
@@ -46,9 +46,9 @@ def my_SCT(station, df=None):
     min_horizonal_scale=10000
     vertical_scale = 200
 
-    xs, _ = create_sets(station,df)
+    xs, _ = create_sets(station,df_name)
 
-    fs, points, obs_to_check = prepare_test(station,df)
+    fs, points, obs_to_check = prepare_test(station,df_name)
     
 
     eps2 = np.full(points.size(), 0.5)

@@ -18,7 +18,7 @@ from tests.newAR import AR_test
 import pandas as pd
 
 
-#
+
 path_test_properties= '../data_files/test_properties/'
 
 
@@ -44,17 +44,19 @@ def feed_test_properties_database(test_names, std, stations):
                 if( not len(test_properties[test_properties['test_name']==test_name]
                             [test_properties['station']==station])):
                     
-                    best=optimize_test(station, test_name, std, plot=False)
-            
                     if test_name == 'build_pdfs':
-                        test= build_pdfs(station, df='test')[0]
+                        test= build_pdfs(station, df_name='test')
                     elif test_name == 'SCT':
                         test= my_SCT(station, df='test')
                     elif test_name == 'buddy_check':
-                        test= my_buddy_check(station, df='test')
+                        test= my_buddy_check(station, df_name='test')
                     elif test_name == 'AR':
                         test= AR_test(station, 'test')
                     
+                    
+                    best=optimize_test(station, test_name, std, plot=False)
+            
+
                     xs, f = create_sets(station, 'test')
                     acc= calculate_acc(xs, f, test,list(best['params'].values())
                     , std=std, n_trials=2000)

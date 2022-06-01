@@ -45,7 +45,7 @@ def create_sets(station, df=None):
     mean= np.mean(df2['max'].to_numpy())
     std= np.std(df2['max'].to_numpy())
     
-    df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan
+    df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan #TODO: make it local
     
     df2.dropna(inplace=True)
     

@@ -50,7 +50,7 @@ def Create_df(variable, start=None, end=None):
                         continue
                     elif(end and date>end):
                         continue
-                    print(filename)
+                    #print(filename)
                     df2=aux_df(str(dirname+'/'+filename), dirname, columns, start, end)
                     df=df.append(df2, ignore_index=True)
             except:
@@ -64,4 +64,4 @@ def Create_df(variable, start=None, end=None):
 
 
 
-Create_df('Press', start=np.datetime64('1997-01-01'), end=np.datetime64('1997-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl')
+Create_df('Press', start=np.datetime64('1999-10-01'), end=np.datetime64('1999-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl')
