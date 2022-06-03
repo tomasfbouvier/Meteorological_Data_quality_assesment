@@ -14,21 +14,45 @@ import pandas as pd
 from preprocessing.create_sets import create_sets
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.ar_model import ar_select_order
-from scipy.stats import pearsonr
+
 import numpy as np
-import matplotlib.pyplot as plt
-import time
-import _pickle as cPickle
-import os
+
+
 from tests.test_base_class import Test
 
 df=  pd.read_pickle("../df_gen/df.pkl")  
 class ARTest(Test):
+    """
+    
+    Time consistency test (TCT) based on ARIMA model. 
+    
+    https://towardsdatascience.com/find-the-order-of-arima-models-b4d99d474e7a
+    
+    TODO: implement an ensemble forecast trained on noisy data for good 
+    stimation of uncertainty values. Needs to be PARALLEL for avoiding 
+    long computation times.
+    
+    TODO: account uncertainty of the estimation in the outlier score.
+    
+    """
     
     
     pbounds = {'p0': (0., 10.)}
     
     def fit(self, df_name):
+        
+        """
+
+        Parameters
+        ----------
+        df_name : The data frame from which the data should be extracted for fitting
+        the ARIMA model. 
+
+        Returns
+        -------
+        None.
+
+        """
         
         xs, f= create_sets(self.station, 'train')
         ys= f(xs) #prepare_points
@@ -58,6 +82,17 @@ class ARTest(Test):
         return 
     
     def evaluate(self, x, y, params):
+        """
+        Parameters
+        ----------
+            - (x,y): point coordinates in the time series of the station being analyzed
+            - thr: score below which a station is labelled as outlier
+  
+        Returns
+        -------
+            - Boolean: test result (True/False)
+        """
+        
         i_trgt= np.where(x==self.xs)[0][0]
         if(i_trgt<self.mod):
             ys2= self.ys[:i_trgt+self.mod].copy() #TRIAL
@@ -89,29 +124,28 @@ class ARTest(Test):
  
 #%%
 
-test= ARTest(6096)
 
+#test=ARTest.init_cached('',6096)
 #%%
 #test.fit('train')
-test=ARTest.init_cached('../data_files/test_pkls/AR', 6096)
-test.fit('train')
+#test.fit('train')
 
-
+"""
 test.prepare_points('test')
 
 
 #%%
-test.optimize_test(1.5)
+test.optimize(1.5)
 #%%
 from tests.test_base_class import Test
 test.save_cached('../data_files/test_pkls/AR')
 #test.fit('train')
-
-#%%
-
-
-#%%
 """
+#%%
+
+"""
+#%%
+
 test.fit('test')
 
 test.prepare_points('test')
@@ -131,8 +165,14 @@ for x in xs:
         plt.plot(x,f(x), 'r.')
     else:
         plt.plot(x,f(x),'b.')
+        
 """
 """
+
+from scipy.stats import pearsonr
+import matplotlib.pyplot as plt
+import time
+
 print('r_past: ', pearsonr(y[1:], pred_past[1:]) )
 print('r_fut: ', pearsonr(y[:-1], pred_fut[:-1]) )
 print('r: ', pearsonr(y[1:-1], pred_mean[1:-1] ))

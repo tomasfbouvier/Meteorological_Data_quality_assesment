@@ -7,8 +7,6 @@ Created on Mon May 30 13:24:40 2022
 """
 
 import sys
-import matplotlib.pyplot as plt
-from numba import jit
 
 sys.path.insert(0, '..')
 
@@ -24,12 +22,8 @@ import numpy as np
 
 class Test():
     
-    
-    
-    pbounds=None
-    
-    
-    
+    pbounds = None
+    confusion_matrix = None 
     
     @classmethod
     def init_cached(cls, filepath, station):
@@ -46,6 +40,7 @@ class Test():
     
     def __init__(self, station):
         self.station= station
+        self.tuning_status=False
         print('Constructor called, test for station ' + str(self.station) + ' created.')
         
         
@@ -54,6 +49,14 @@ class Test():
  
     def save_cached(self, filepath):
         
+        """
+        TODO: consider saving to another format. E.g hdf5.
+        
+        """
+        
+        
+        
+        
         removable_attributes= ['xs', 'ys', 'f'] #Maybe move this to daughters
 
         for attribute in dir(self):
@@ -61,9 +64,9 @@ class Test():
                 delattr(self,attribute)
     
         filename=os.path.join(filepath, str(self.station)+'.pkl')
-        output_file= open(filename, "wb")
+        output_file= open(filename, "wb+")
         cPickle.dump(self, output_file)
-    
+        print('saved file')
     
     def calculate_acc(self, xs, ys, params, std, n_trials):
         
@@ -75,7 +78,7 @@ class Test():
             - params: the hyperparameters of the test
             - n_trials: number of synthetic anomalies to be generated for testing 
         
-        Outputs:
+        Returns:
         --------
             - Confusion matrix: [[True Postivies, False Negatives][False Positives, True Negatives]]
             
@@ -96,7 +99,8 @@ class Test():
             ----------
                 - y: nominal value to be inputed
                 - previous_status: previous inputation process (True or False)
-            Outputs:
+                
+            Returns:
             --------
                 - Confusion matrix: [[True Postivies, False Negatives][False Positives, True Negatives]]
                 
@@ -104,6 +108,7 @@ class Test():
             ----
             Implement multiple sources of error for a better benchmark.
             """
+            
             i= np.random.randint(0, len(ys))
             
             # Explored ranges: >4.5, >3.5, >2.5, >1.5
@@ -148,17 +153,24 @@ class Test():
         return confusion_matrix
 
 
-    def optimize_test(self, std):
+    def optimize(self, std):
         
-        if(not(self.pbounds)):
+        if(not(self.pbounds) or not(self.prepare_points)):
             return 
         
+        
+        df_name='train'
+        
+        
         bounds_transformer = SequentialDomainReductionTransformer()
-        xs, f = create_sets(self.station, df='test')
+        xs, f = create_sets(self.station, df_name ) # 'train' ????
         ys= f(xs)
+        
+        self.prepare_points(df_name)
+        
         del(f)
         
-        def calculate_J(**kwargs ):
+        def calculate_J(xs=xs,ys=ys,**kwargs ):
             confusion_matrix= self.calculate_acc(xs, ys,params=kwargs,std=std, n_trials= 100)
             J=(confusion_matrix[0,0]+confusion_matrix[1,1])/(sum(sum(confusion_matrix)))
             #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.9
@@ -179,7 +191,18 @@ class Test():
         # TODO: consider add different number of trials for random exploration depending on number of hyperparams 
             #print(calculate_acc(x,f,test, [optimizer.max['params']['p0'],optimizer.max['params']['p1'],optimizer.max['params']['p2']],1000, stds[i]))
         
-        del(xs, ys)
-        return optimizer.max
+        del(xs,ys)
+        xs, f = create_sets(self.station, df_name='test') # 'train' ????
+        ys= f(xs)
+        
+        self.prepare_points('test')
+        
+        self.params= optimizer.max['params']
+        self.llh= self.calculate_acc(xs, ys,params=self.params,std=std, n_trials= 1000)
+        
+        print(self.llh)
+        
+        del(xs, ys, f)
+        return 
 
  

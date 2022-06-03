@@ -17,7 +17,9 @@ df_full=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesm
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl")  
 
-def create_sets(station, df=None):
+
+
+def create_sets(station, df_name=None):
     """
     Parameters
     ----------
@@ -30,14 +32,14 @@ def create_sets(station, df=None):
         - f: Cubic spline closure to get the y value by interpolation at any given time.  
     """
     
-    if (df=='train'):
+    if (df_name=='train'):
         df= df_train
-    elif(df=='test'):
+    elif(df_name=='test'):
         df= df_test
     else:
         df= df_full
-    df2=df[df['station']==station].copy()
     
+    df2=df[df['station']==station].copy()
     df2.replace(0, np.nan, inplace=True)
     
     df2.sort_values(by='timestamp', inplace=True)
@@ -55,7 +57,7 @@ def create_sets(station, df=None):
 
     x = x.to_numpy('datetime64[h]')
     y = y.to_numpy()
-
+    
 
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
 

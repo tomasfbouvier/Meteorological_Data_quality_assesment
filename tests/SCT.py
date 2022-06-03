@@ -9,7 +9,7 @@ import pandas as pd
 
 from preprocessing.create_sets import create_sets
 import numpy as np
-from test_base_class import Test
+from tests.test_base_class import Test
 
 try:
     stations_correlations= np.loadtxt('../data_files/test_properties/stations_correlations.csv')
@@ -32,7 +32,7 @@ class STCT(Test):
             diff.append(f2(x)-f1(x))
         return gaussian_kde(diff)
 
-    def build_pdfs(self, df_name, thr=0.1):
+    def fit(self, thr=0.1):
         """
         Parameters
         ----------
@@ -46,7 +46,7 @@ class STCT(Test):
             - correlated stations: ID list of the stations used for the computation 
         """
         
-        df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_" +df_name+".pkl")
+        df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")
         stations= df['station'].unique()[:]
         
         station_index= np.where(stations == self.station)[0][0]
@@ -67,13 +67,21 @@ class STCT(Test):
             try:
                 self.correlated_stations[target_station] = {
                     'pdf' : self.create_probability(target_station,'train'),
-                    'f' : create_sets(target_station, 'test')[1],
+                    'f' : None,
                     'r': stations_correlations[np.where(stations == self.station)[0][0],np.where(stations == target_station)[0][0]]}
             except:
                 pass
         self.sum_r= sum([aux['r'] for aux in self.correlated_stations.values() if aux])
         return
 
+    def prepare_points(self, df_name):
+        for target_station in self.correlated_stations.keys():
+            try:
+                self.correlated_stations[target_station]['f']= create_sets(target_station, df_name)[1]
+            except:
+                pass
+        return   
+    
     def evaluate(self, x, y, params):
         """
         Parameters
@@ -90,6 +98,7 @@ class STCT(Test):
             #_, f2= create_sets(correlated_stations[i], df)
 
             diff=self.correlated_stations[target_station]['f'](x)-y
+
             try:
                 output_prob+= self.correlated_stations[target_station]['pdf'].evaluate(diff)*self.correlated_stations[target_station]['r']
             except:
@@ -106,11 +115,12 @@ class STCT(Test):
             return False
         
         
-
+"""
 test= STCT(6096)
 #%%
-#test.fit('train')
-test.build_pdfs('train')
+test.fit('train')
+#test.build_pdfs('train')
 
 #%%
-test.optimize_test(1.5)
+test.optimize(1.5)
+"""
