@@ -9,33 +9,36 @@ import sys
 
 sys.path.insert(0, '..')
 from preprocessing.create_sets import create_sets
-from tests.helper_functions_titanlib import prepare_test
+from helper_functions.helper_functions_titanlib import prepare_test
 import titanlib
 import numpy as np
 
-def my_buddy_check(station, df_name=None):    
-    max_elev_diff = -1 #200
-    elev_gradient = -0.0065
-    num_iterations = 1
-    xs, _ = create_sets(station)
+from tests.test_base_class import Test
 
-    fs, points, obs_to_check = prepare_test(station, df_name)
-    i= obs_to_check.index(1)
 
-    def aux_buddy_check(x,y,params):
+class buddy_check(Test):
+    
+    pbounds = {'radius': (0., 10000.), 'num_min':(0.,  5000), 'min_std': 1}
+    
+    def prepare_points(self,df_name=None):    
+
+        self.xs, _ = create_sets(self.station , df_name) 
         
-        min_std = params[0]# 1 TO BE OPTIMIZED
-        threshold = params[1]#2  TO BE OPTIMIZED
-        radius= [params[2]]# [90000] TO BE OPTIMIZED
-        num_min=[4] # TO BE OPTIMIZED ?
-        
+        self.fs, self.points, self.obs_to_check = prepare_test(self.station, df_name)
+        self.i= self.obs_to_check.index(1)
+
+    def evaluate(self,x,y,params):
+
         values=[]
-        for f in fs:
+        for f in self.fs:
             values.append(f(x).tolist())
-        values[i]=y.tolist()
-        aux=titanlib.buddy_check(points, values,  radius ,num_min,threshold, max_elev_diff, elev_gradient, min_std, num_iterations,obs_to_check)[i]
+        values[self.i]=y.tolist()
+        aux=titanlib.buddy_check(self.points, values,  radius= params['radius'] , 
+                                 num_min= params['num_min'], threshold= params['threshold'], 
+                                 max_elev_diff = -1, 
+                                 elev_gradient = -0.0065, min_std= params['min std'],
+                                 num_iterations = 1,obs_to_check=self.obs_to_check)[self.i]
         return aux
-    return aux_buddy_check
 
 def my_SCT(station, df_name=None):    
     num_min = 5

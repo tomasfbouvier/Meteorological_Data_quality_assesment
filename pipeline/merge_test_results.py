@@ -9,77 +9,40 @@ Created on Tue May 17 14:23:05 2022
 import sys
 sys.path.insert(0, '..')
 
-import pandas as pd
-import numpy as np
-from tests.SCT import build_pdfs
-from tests.my_titanlib import my_SCT, my_buddy_check
-from tests.newAR import AR_test
-import ast
-
+import os
 path_test_properties= '../data_files/test_properties2/'
 
 
+from tests.AR import ARTest
+from tests.SCT import STCT 
 
-def multi_test(std, station, df):
+
+def multi_test(station, df_name='deploy'):
     
-    file_name= path_test_properties+'test_properties_'+str(std).replace('.','_')+ '.csv'    
-    
-    try:
-        test_properties= pd.read_csv(file_name, header=0,
-                                     names=['station', 'test_name', 'params',
-                                            'TPR', 'FNR', 'FPR', 'TNR'])
-        test_properties= test_properties[test_properties['station']==station]
-    except: 
-        print('file ' +file_name+ ' does not exist!')
+    path_test_properties= '../data_files/test_pkls_1_5'
+
+    for dirname, _, filenames in os.walk(path_test_properties):
+        tests=[]
+        for filename in filenames:
+            if(str(station) in filename):
+                if('ARTest' in dirname):
+                    tests.append(ARTest.init_cached(dirname, station))
+                    tests[-1].prepare_points(df_name)
+                elif('STCT' in dirname):
+                    tests.append(STCT.init_cached(dirname, station))
+                    tests[-1].prepare_points(df_name)
+                
+    def evaluate(x,y):
         
-        return 
-
-    llhs=[]; param_list=[]; tests=[]
-    print(test_properties)
-    for i in range(len(test_properties)):
-        test_name= test_properties.iloc[i]['test_name']
-        if test_name == 'build_pdfs':
-            params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
-            test= build_pdfs(station, df= df)
-        elif test_name == 'SCT':
-            params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
-
-            test= my_SCT(station)
-        elif test_name == 'buddy_check':
-            params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
-
-            test= my_buddy_check(station)
-        if test_name== 'AR':
-            params=  ast.literal_eval(test_properties.iloc[i]['params'])[0]
-
-            test= AR_test(station)
-        
-        llh= np.array([[test_properties.iloc[i]['TPR'],
-                        test_properties.iloc[i]['FNR']],
-                       [test_properties.iloc[i]['FPR'], 
-                        test_properties.iloc[i]['TNR']]])
-        llhs.append(llh)
-        param_list.append(params)
-        tests.append(test)
-    
-    # Should add del
-        
-    def aux(x, y,  printer=False):
-        pos_prob = 0.5 
-        for i in range(len(llhs)):
-            
-            idx= int(not(tests[i](x,y, param_list[i])))
-            
-            # TODO: Add a bias value for avoiding exploding probabilities.
-            
-            if(printer): print(llhs[i], idx, llhs[i][idx, 0]*pos_prob  , llhs[i][idx, 1]*(1-pos_prob))
-            pos_prob = pos_prob*llhs[i][idx, 0]/(llhs[i][idx, 0]*pos_prob  + llhs[i][idx, 1]*(1-pos_prob)) # Bayes update
-            if(printer): print('pos_prob', pos_prob)
+        pos_prob= 0.5 #flat prior ---> #TODO: adapt to well informed prior.
+        for test in tests:
+            idx= int(not(test.evaluate(x, y, test.params)))
+            pos_prob = pos_prob*test.llh[idx, 0]/(test.llh[idx, 0]*pos_prob  + test.llh[idx, 1]*(1-pos_prob)) # Bayes update
         return pos_prob
+    return evaluate
+
     
-    
-    
-    return aux
+   
 """
 import matplotlib.pyplot as plt
 from preprocessing.create_sets import create_sets
