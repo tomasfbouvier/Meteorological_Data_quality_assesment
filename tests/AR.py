@@ -39,6 +39,8 @@ class ARTest(Test):
     
     pbounds = {'p0': (0., 10.)}
     
+    to_save = ['confusion_matrix', 'params', 'tuning_status', 'acc', 'acc_train', 'ar_past2', 'ar_fut2', 'mod']
+
     def fit(self, df_name):
         
         """
@@ -119,13 +121,32 @@ class ARTest(Test):
         else:
             return False
     
+    def should_pickle(k):
+        
+        
+        removable_attributes= ['xs', 'ys', 'f', 'prepare_points', 'evaluate', 
+                               'optimize', 'fit'] #Maybe move this to daughters
+        
+        if k in removable_attributes:
+            print('deleting ' + k)
+            return False
+        else:
+            return True
 
         
  
 #%%
+"""
 
+test=ARTest.init_cached('',6075.0)
+test.fit('train')
+test.optimize(1.5)
+test.save_cached('../data_files/test_pkls_1_5/ARTest')
+del(test)
+test= ARTest.init_cached('../data_files/test_pkls_1_5/ARTest',6096)
 
-#test=ARTest.init_cached('',6096)
+print(test.confusion_matrix)
+"""
 #%%
 #test.fit('train')
 #test.fit('train')

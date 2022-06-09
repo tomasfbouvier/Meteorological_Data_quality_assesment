@@ -58,8 +58,11 @@ def create_sets(station, df_name=None):
     x = x.to_numpy('datetime64[h]')
     y = y.to_numpy()
     
+    
 
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
 
     del(df2)
     return x,f
+
+create_sets(4373, 'train')
