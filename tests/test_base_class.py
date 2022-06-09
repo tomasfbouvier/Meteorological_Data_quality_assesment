@@ -19,34 +19,42 @@ import _pickle as cPickle
 import numpy as np
 
 
-
 class Test():
     
     pbounds = None
     confusion_matrix = None 
+    params= None
+    tuning_status=False
+    
+    to_save=[]
     
     @classmethod
     def init_cached(cls, filepath, station):
         filename=os.path.join(filepath, str(station)+'.pkl' )
+        print(filename)
         if not os.path.exists(filename):  # create new
-
-            result = cls(station)
+            print('Constructor called, test for station ' + str(station) + ' created.')
+            test = cls(station)
             
-            return result
+            return test
         else:
             print('loaded file')
             with open(filename, 'rb') as fp:
-                return cPickle.load(fp)
+                initial_data= cPickle.load(fp)
+                test=cls(station)
+                for key in initial_data:
+                    setattr(test, key, initial_data[key])
+                del(initial_data)
+                return test
     
     def __init__(self, station):
         self.station= station
         self.tuning_status=False
-        print('Constructor called, test for station ' + str(self.station) + ' created.')
+        
         
         
         return 
     
- 
     def save_cached(self, filepath):
         
         """
@@ -55,17 +63,24 @@ class Test():
         """
         
         
+        """
+        
+        removable_attributes= ['xs', 'ys', 'f', 'prepare_points', 'evaluate', 
+                               'optimize', 'fit'] #Maybe move this to daughters
         
         
-        removable_attributes= ['xs', 'ys', 'f'] #Maybe move this to daughters
-
         for attribute in dir(self):
             if(attribute in removable_attributes):
                 delattr(self,attribute)
-    
+        
+        """
+        aux={}
+        for key in self.to_save:
+            
+            aux[key]=getattr(self, key)
         filename=os.path.join(filepath, str(self.station)+'.pkl')
         output_file= open(filename, "wb+")
-        cPickle.dump(self, output_file)
+        cPickle.dump(aux, output_file)
         print('saved file')
     
     def calculate_acc(self, xs, ys, params, std, n_trials):
@@ -89,7 +104,6 @@ class Test():
         
         if not hasattr(self, 'evaluate') and callable(getattr(self, 'evaluate')):
             return
-        
         
         
         def create_outlier(ys):
@@ -124,7 +138,7 @@ class Test():
         
         TP=0; FP=0; TN=0; FN=0;
         outlier_status=False
-        
+
         for trial in range(n_trials):
             if(trial%2==0):
                 idx_out, out = create_outlier(ys)
@@ -134,8 +148,9 @@ class Test():
                 idx_out, out, outlier_status= (np.random.randint(0, len(ys)), 0., False)
             
             ys[idx_out]+= out
-        
+            
             test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+            
 
             if(test_result==True and outlier_status==True):
                 TP+=1
@@ -157,36 +172,33 @@ class Test():
         
         if(not(self.pbounds) or not(self.prepare_points)):
             return 
-        
-        
-        df_name='train'
-        
+
         
         bounds_transformer = SequentialDomainReductionTransformer()
-        xs, f = create_sets(self.station, df_name ) # 'train' ????
+        xs, f = create_sets(self.station, 'train' ) # 'train' ????
         ys= f(xs)
         
-        self.prepare_points(df_name)
-        
+        self.prepare_points('train')
+
         del(f)
         
         def calculate_J(xs=xs,ys=ys,**kwargs ):
             confusion_matrix= self.calculate_acc(xs, ys,params=kwargs,std=std, n_trials= 100)
             J=(confusion_matrix[0,0]+confusion_matrix[1,1])/(sum(sum(confusion_matrix)))
             #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.9
-            del(confusion_matrix)
+            del(confusion_matrix, xs, ys)
             return J
         
         optimizer = BayesianOptimization(
             f=calculate_J,
             pbounds=self.pbounds,
             random_state=1,
-            bounds_transformer=bounds_transformer 
+            bounds_transformer=None 
         )
 
         optimizer.maximize(
-            init_points=10,
-            n_iter=20,
+            init_points=20,
+            n_iter=30,
         )
         # TODO: consider add different number of trials for random exploration depending on number of hyperparams 
             #print(calculate_acc(x,f,test, [optimizer.max['params']['p0'],optimizer.max['params']['p1'],optimizer.max['params']['p2']],1000, stds[i]))
@@ -198,9 +210,10 @@ class Test():
         self.prepare_points('test')
         
         self.params= optimizer.max['params']
-        self.llh= self.calculate_acc(xs, ys,params=self.params,std=std, n_trials= 1000)
-        
-        print(self.llh)
+        self.acc_train= optimizer.max['target']
+        self.confusion_matrix= self.calculate_acc(xs, ys,params=self.params,std=std, n_trials= 1000)
+        self.acc= (self.confusion_matrix[0,0]+self.confusion_matrix[1,1])/(sum(sum(self.confusion_matrix)))
+        print(self.confusion_matrix)
         
         del(xs, ys, f)
         return 

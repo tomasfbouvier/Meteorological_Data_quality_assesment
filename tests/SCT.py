@@ -12,7 +12,7 @@ import numpy as np
 from tests.test_base_class import Test
 
 try:
-    stations_correlations= np.loadtxt('../data_files/test_properties/stations_correlations.csv')
+    stations_correlations= np.loadtxt('../data_files/stations_correlations.csv')
 except:
     print('station correlations file doesn´t exist')
 
@@ -20,6 +20,7 @@ except:
 class STCT(Test):
     
     pbounds = {'p0': (0., 1.)}
+    to_save=['confusion_matrix', 'params', 'correlated_stations','sum_r', 'tuning_status']
     
     def create_probability(self,target_station, df_name=None):   
         
@@ -114,13 +115,12 @@ class STCT(Test):
         else:
             return False
         
-        
-"""
-test= STCT(6096)
-#%%
+"""  
+test=STCT.init_cached('',6096)
 test.fit('train')
-#test.build_pdfs('train')
+test.optimize(3.5)
+test.save_cached('../data_files/test_pkls_1_5/STCT')
 
-#%%
-test.optimize(1.5)
+del(test)
+test= STCT.init_cached('../data_files/test_pkls_1_5/STCT',6096)
 """
