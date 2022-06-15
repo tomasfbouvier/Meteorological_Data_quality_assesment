@@ -16,7 +16,7 @@ from tests.my_titanlib import BuddyCheck, SCT
 
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 
-path_test_properties= '../data_files/test_pkls_2_5'
+path_test_properties= '../data_files/test_pkls_1_5'
 
 
 def feed_db(test_names, std, stations):
@@ -36,7 +36,7 @@ def feed_db(test_names, std, stations):
                 elif(test_name=='BuddyCheck'):
                     test=BuddyCheck.init_cached(dirname, station)
                 elif(test_name=='SCT'):
-                        test=SCT.init_cached(dirname, station)
+                    test=SCT.init_cached(dirname, station)
                     
                 else:
                     print(f'test {test_name} not defined')
@@ -60,4 +60,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-feed_db(['BuddyCheck'], 2.5,df_train['station'].unique()[50:])
+feed_db(['BuddyCheck', 'ARTest', 'SCT'], 1.5,[6096.0])

@@ -36,9 +36,20 @@ class BuddyCheck(Test):
 
         values=[]
         for f in self.fs:
-            values.append(f(x).tolist())
+            value=f(x)
+            if(value>184 and value<327):
+                values.append(value.tolist())
+            elif(len(values)):
+                values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
+            else:
+                values.append(300)
         values[self.i]=y.tolist()
-
+        
+        #print(values)
+        
+        
+        
+        
         aux=titanlib.buddy_check(self.points, values, [params['radius']], 
                                  [4], params['threshold'],self.max_elev_diff, 
                                  self.elev_gradient, params['min std'], 
@@ -48,12 +59,12 @@ class BuddyCheck(Test):
 
 class SCT(Test):    
     
-    pbounds = {'pos': (0.,6.),'neg': (0.,6.), 'inner radius': (0, 100000), 'outer radius':(0, 200000)}
+    pbounds = {'pos': (0.,6.),'neg': (0.,10.), 'inner radius': (0, 100000), 'outer radius':(0, 200000)}
     to_save=['confusion_matrix', 'params', 'tuning_status', 'acc', 'acc_train']
     
     num_min = 5
     num_max = 100
-    num_iterations = 1
+    num_iterations = 5
     num_min_prof = 20
     min_elev_diff = 200
     min_horizonal_scale=10000
@@ -78,8 +89,18 @@ class SCT(Test):
         
         values=[]
         for f in self.fs:
-            values.append(f(x).tolist())
+            value=f(x)
+            if(value>184 and value<327):
+                values.append(value.tolist())
+            elif(len(values)):
+                values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
+            else:
+                values.append(300)
         values[self.i]=y.tolist()
+            
+        values[self.i]=y.tolist()
+
+        #print(values)
         aux=titanlib.sct(self.points, values, self.num_min, self.num_max,
             params['inner radius'],params['inner radius']+params['outer radius'],
             self.num_iterations, self.num_min_prof, self.min_elev_diff, self.min_horizonal_scale,
@@ -89,11 +110,11 @@ class SCT(Test):
         return aux
     
 
+
+
+test=BuddyCheck.init_cached('',6096)
+test.optimize(2.5)
 """
-
-test=SCT.init_cached('',6096)
-
-test.optimize(3.5)
 test.save_cached('../data_files/test_pkls_1_5/SCT')
 
 del(test)

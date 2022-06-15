@@ -13,13 +13,13 @@ from scipy.interpolate import interp1d
 import pandas as pd
 import numpy as np
 
-df_full=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
+df_deploy=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl")  
 
 
 
-def create_sets(station, df_name=None):
+def create_sets(station, df_name='train'):
     """
     Parameters
     ----------
@@ -36,18 +36,28 @@ def create_sets(station, df_name=None):
         df= df_train
     elif(df_name=='test'):
         df= df_test
+    elif(df_name=='deploy'):
+        df= df_deploy
     else:
-        df= df_full
-    
+        print('there was an error with the df name')
+        
     df2=df[df['station']==station].copy()
-    df2.replace(0, np.nan, inplace=True)
+    
+    df2[df2['max'] <= 0] = np.nan
+    
+    #temp only:
+    df2[df2['max'] < 184] = np.nan
+    df2[df2['max'] > 327] = np.nan
+    
+    #print(station, ' ','min', np.nanmin(df2['max']), 'max',  np.nanmax(df2['max']))
+
     
     df2.sort_values(by='timestamp', inplace=True)
     
     mean= np.mean(df2['max'].to_numpy())
     std= np.std(df2['max'].to_numpy())
     
-    df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan #TODO: make it local
+    #df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan #TODO: make it local
     
     df2.dropna(inplace=True)
     
@@ -64,5 +74,3 @@ def create_sets(station, df_name=None):
 
     del(df2)
     return x,f
-
-create_sets(4373, 'train')

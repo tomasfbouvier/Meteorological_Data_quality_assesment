@@ -136,11 +136,12 @@ class ARTest(Test):
         
  
 #%%
-"""
 
-test=ARTest.init_cached('',6075.0)
+
+test=ARTest.init_cached('',4201.0)
 test.fit('train')
 test.optimize(1.5)
+"""
 test.save_cached('../data_files/test_pkls_1_5/ARTest')
 del(test)
 test= ARTest.init_cached('../data_files/test_pkls_1_5/ARTest',6096)

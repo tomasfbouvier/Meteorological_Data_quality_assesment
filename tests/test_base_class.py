@@ -136,7 +136,7 @@ class Test():
             return i, out
         
         
-        TP=0; FP=0; TN=0; FN=0;
+        TP=1; FP=1; TN=1; FN=1; #Trying to smooth confusion matrix
         outlier_status=False
 
         for trial in range(n_trials):
@@ -184,7 +184,7 @@ class Test():
         
         def calculate_J(xs=xs,ys=ys,**kwargs ):
             confusion_matrix= self.calculate_acc(xs, ys,params=kwargs,std=std, n_trials= 100)
-            J=(confusion_matrix[0,0]+confusion_matrix[1,1])/(sum(sum(confusion_matrix)))
+            J=(confusion_matrix[0,0]+confusion_matrix[1,1])/2.
             #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.9
             del(confusion_matrix, xs, ys)
             return J
@@ -193,12 +193,12 @@ class Test():
             f=calculate_J,
             pbounds=self.pbounds,
             random_state=1,
-            bounds_transformer=None 
+            bounds_transformer=None #SequentialDomainReductionTransformer()
         )
 
         optimizer.maximize(
             init_points=20,
-            n_iter=30,
+            n_iter=40,
         )
         # TODO: consider add different number of trials for random exploration depending on number of hyperparams 
             #print(calculate_acc(x,f,test, [optimizer.max['params']['p0'],optimizer.max['params']['p1'],optimizer.max['params']['p2']],1000, stds[i]))

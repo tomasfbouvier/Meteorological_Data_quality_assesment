@@ -42,12 +42,17 @@ def prepare_test(station, df_name=None):
     points= []
     fs=[]
     obs_to_check=[]
+    
+    
     for station1 in surrounds['station']:
         try:
             x,f= create_sets(station1, df_name)
             #values.append(f(time_stamp).tolist())
             fs.append(f)
             points.append(df3[df3['station']==station1].to_numpy()[0,3:].tolist())
+        
+            
+            
             if station1==station:
                 obs_to_check.append(1)
             else:
