@@ -14,9 +14,12 @@ import pandas as pd
 from preprocessing.create_sets import create_sets
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.ar_model import ar_select_order
+from statsmodels.tsa.seasonal import STL
+from statsmodels.tsa.stattools import acf
+
 
 import numpy as np
-
+import matplotlib.pyplot as plt # remove
 
 from tests.test_base_class import Test
 
@@ -59,13 +62,18 @@ class ARTest(Test):
         xs, f= create_sets(self.station, 'train')
         ys= f(xs) #prepare_points
         
-        ys+=  3.*np.random.randn(len(ys)) # Add some noise for robust fit
+        #ys+=  3.*np.random.randn(len(ys)) # Add some noise for robust fit
 
         y_flip= np.flip(ys, axis=None)
         
-        mod = ar_select_order(ys, maxlag=13)
+        mod = ar_select_order(ys, maxlag=10, glob=True, seasonal=True, period= 8) 
+        #valid for temps
         
-        self.ar_past2 = ARIMA(endog=ys, order=(mod.ar_lags,0,0),  trend='n', missing= 'drop').fit(low_memory=True).apply
+        print(mod.ar_lags)
+        
+        
+        self.ar_past2 = ARIMA(endog=ys, order=(mod.ar_lags,0,0), seasonal_order=(0,0,0,0),
+                              trend='n', missing= 'drop').fit(low_memory=True).apply
         self.ar_fut2 = ARIMA(y_flip, order=(mod.ar_lags,0,0),  trend='n',  missing= 'drop').fit(low_memory=True).apply
         # TODO: Tengo que cargarme este mastodonte de memoria
         
@@ -137,10 +145,12 @@ class ARTest(Test):
  
 #%%
 
-
-test=ARTest.init_cached('',4201.0)
+"""
+test=ARTest.init_cached('',6104.0)
 test.fit('train')
-test.optimize(1.5)
+
+test.optimize(2.5)
+"""
 """
 test.save_cached('../data_files/test_pkls_1_5/ARTest')
 del(test)

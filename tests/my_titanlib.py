@@ -21,7 +21,7 @@ class BuddyCheck(Test):
     pbounds = {'min std': (.5,.6),'threshold': (0.,3.), 'radius': (30000, 100000)}
     to_save=['confusion_matrix', 'params', 'tuning_status', 'acc', 'acc_train']
     
-    max_elev_diff = -1 #200
+    max_elev_diff = 200
     elev_gradient = -0.0065
     num_iterations = 1
     
@@ -42,7 +42,7 @@ class BuddyCheck(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(300)
+                values.append(280)
         values[self.i]=y.tolist()
         
         #print(values)
@@ -64,7 +64,7 @@ class SCT(Test):
     
     num_min = 5
     num_max = 100
-    num_iterations = 5
+    num_iterations = 1
     num_min_prof = 20
     min_elev_diff = 200
     min_horizonal_scale=10000
@@ -95,7 +95,7 @@ class SCT(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(300)
+                values.append(280) #This is not good
         values[self.i]=y.tolist()
             
         values[self.i]=y.tolist()
@@ -111,9 +111,10 @@ class SCT(Test):
     
 
 
-
+"""
 test=BuddyCheck.init_cached('',6096)
-test.optimize(2.5)
+test.optimize(1.5)
+"""
 """
 test.save_cached('../data_files/test_pkls_1_5/SCT')
 
