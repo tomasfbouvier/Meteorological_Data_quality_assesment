@@ -26,6 +26,7 @@ class Test():
     params= None
     tuning_status=False
     
+    
     to_save=[]
     
     @classmethod
@@ -78,6 +79,7 @@ class Test():
         for key in self.to_save:
             
             aux[key]=getattr(self, key)
+        print(aux)
         filename=os.path.join(filepath, str(self.station)+'.pkl')
         output_file= open(filename, "wb+")
         cPickle.dump(aux, output_file)
@@ -105,7 +107,11 @@ class Test():
         if not hasattr(self, 'evaluate') and callable(getattr(self, 'evaluate')):
             return
         
-        
+        rho_pos=0.011; rho_neg=0.1
+        T= np.array([[0.94371228 ,0.06422073],
+         [0.05628772, 0.93577927]])#noise labels
+        mult=T.T
+        #mult=np.linalg.inv(T.T)#np.linalg.pinv(np.diag(np.array([0.296514, 0.703486])))@np.linalg.pinv(T)
         def create_outlier(ys):
             
             """
@@ -127,9 +133,9 @@ class Test():
             
             # Explored ranges: >4.5, >3.5, >2.5, >1.5
             
-            out= 2.*np.random.rand()-1. #2*std*np.random.rand()-std
+            out= 0#2.*np.random.rand()-1. #2*std*np.random.rand()-std
             
-            if(out<0.):
+            if(np.random.rand()<0.5):
                 out-=std
             else:
                 out=+std 
@@ -138,7 +144,7 @@ class Test():
         
         TP=1; FP=1; TN=1; FN=1; #Trying to smooth confusion matrix
         outlier_status=False
-
+        
         for trial in range(n_trials):
             if(trial%2==0):
                 idx_out, out = create_outlier(ys)
@@ -151,20 +157,32 @@ class Test():
             
             test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
             
-
-            if(test_result==True and outlier_status==True):
-                TP+=1
-            elif(test_result==True and outlier_status==False):
-                FP+=1
-            elif(test_result==False and outlier_status==False):
-                TN+=1
-            elif(test_result==False and outlier_status==True):
-                FN+=1
             
+            
+            if(test_result==True and outlier_status==True):
+                TP+=1; 
+            elif(test_result==True and outlier_status==False):
+                FP+=1; 
+            elif(test_result==False and outlier_status==False):
+                TN+=1;
+            elif(test_result==False and outlier_status==True):
+                FN+=1; 
             ys[idx_out]-= out
                 
         TPR= TP/(TP+FN); TNR= TN/(TN+FP); FNR= FN/(TP+FN); FPR=FP/(TN+FP)
         confusion_matrix= np.array([[TPR, FNR],[FPR, TNR]])
+        
+        #print(confusion_matrix)
+        
+        confusion_matrix= mult@confusion_matrix
+        
+        #print(confusion_matrix)
+        #print(confusion_matrix)
+        #confusion_matrix2= np.array([[TP, FN],[FP, TN]])/(n_trials+4)
+
+        #confusion_matrix=(mult@confusion_matrix2)
+        #print(confusion_matrix)
+
         return confusion_matrix
 
 
@@ -184,7 +202,17 @@ class Test():
         
         def calculate_J(xs=xs,ys=ys,**kwargs ):
             confusion_matrix= self.calculate_acc(xs, ys,params=kwargs,std=std, n_trials= 100)
-            J=(confusion_matrix[0,0]+confusion_matrix[1,1])/2.
+            
+            
+            #J=(confusion_matrix[0,0]+confusion_matrix[1,1])/2.
+            
+            if np.any(confusion_matrix<0):
+                J=-10
+            else:
+                J=-((confusion_matrix[0,0]+confusion_matrix[1,1])*0.5759394198788437+
+                (confusion_matrix[0,1]+confusion_matrix[1,0])*0.8259394198788436)
+                
+                
             #J= 1 - confusion_matrix[0,0] + confusion_matrix[1,0]*1.9
             del(confusion_matrix, xs, ys)
             return J
@@ -193,7 +221,7 @@ class Test():
             f=calculate_J,
             pbounds=self.pbounds,
             random_state=1,
-            bounds_transformer=None #SequentialDomainReductionTransformer()
+            bounds_transformer=SequentialDomainReductionTransformer()
         )
 
         optimizer.maximize(

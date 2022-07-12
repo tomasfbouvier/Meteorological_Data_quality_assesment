@@ -6,5 +6,6 @@
 *.png
 *.pkl
 /data_files
+/Images
 
 

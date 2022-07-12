@@ -46,8 +46,8 @@ def create_sets(station, df_name='train'):
     df2[df2['max'] <= 0] = np.nan
     
     #temp only:
-    df2[df2['max'] < 184] = np.nan
-    df2[df2['max'] > 327] = np.nan
+    #df2[df2['max'] < 184] = np.nan
+    #df2[df2['max'] > 327] = np.nan
     
     #print(station, ' ','min', np.nanmin(df2['max']), 'max',  np.nanmax(df2['max']))
 

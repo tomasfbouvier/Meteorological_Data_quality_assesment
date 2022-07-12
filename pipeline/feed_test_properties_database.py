@@ -10,13 +10,13 @@ sys.path.insert(0, '..')
 import os
 
 from tests.AR import ARTest
-from tests.SCT import STCT     # TODO: see how to make it dynamical for new tests without reinstalling the full package
+from tests.STCT import STCT     # TODO: see how to make it dynamical for new tests without reinstalling the full package
 import pandas as pd
 from tests.my_titanlib import BuddyCheck, SCT
 
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 
-path_test_properties= '../data_files/test_pkls_1_5'
+path_test_properties= '../data_files/press/test_pkls_3_5'
 
 
 def feed_db(test_names, std, stations):
@@ -25,6 +25,9 @@ def feed_db(test_names, std, stations):
         for station in stations:
             #test=BuddyCheck.init_cached(dirname, station)
             try:
+                print('test name: ', test_name)
+                print('station ', station)
+                
                 dirname= os.path.join(path_test_properties, test_name)
                 #TODO: consider remove test creation from function.
                 if(test_name=='ARTest'):
@@ -60,4 +63,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-feed_db(['BuddyCheck', 'ARTest', 'SCT'], 1.5,[6096.0])
+feed_db(['STCT'], 3.5, df_train['station'].unique()[:])

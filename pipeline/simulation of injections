@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Jun 24 11:49:31 2022
+
+@author: tobou
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+from bayes_opt import BayesianOptimization
+
+
+y0s=[]
+ys=[]
+
+#delta_y=3.5
+iterations=10000
+deltas=[]
+
+thr=1.5
+def simulation(delta_y, plot=False):
+    TP=0; FP=0; FN=0; TN=0;
+    P=0; N=0;
+    
+    for i in range(iterations):
+        if np.random.rand()<0.1:
+            y0= 9*np.random.rand()-4.5
+            if(y0<0.):
+                y0-=0.5
+            else:
+                y0+=0.5
+        else:
+            y0=0.5*np.random.randn()
+       
+        if(i%2==0):
+            if(i%4==0):
+                delta=delta_y
+            else:
+                delta=-delta_y
+        else:
+            delta=0.
+        
+        
+        y=y0+delta
+    
+        y0s.append(y0)
+        deltas.append(delta)
+        ys.append(y)
+        
+        
+        if(delta!=0. and abs(y)>thr):
+            TP+=1; P+=1
+        elif(delta!=0. and abs(y)<thr):
+            FP+=1; N+=1
+        elif(delta==0. and abs(y)>thr):
+            FN+=1; P+=1
+        elif(delta==0. and abs(y)<thr):
+            TN+=1; N+=1
+        
+    p_y = np.array([P,N])/iterations
+    TPR= TP/P; FNR=FN/P; TNR= TN/N;  FPR= FP/N
+    
+    p_y_y= np.array([[TPR, FPR],[FNR, TNR]])
+    
+    #print(p_y, p_y_y)
+    
+    if(plot):
+        fig,ax= plt.subplots(nrows=2, ncols=1)
+        ax[0].hist(y0s, bins=1000, density=True)
+        ax[0].set_title('prior')
+        ax[1].hist(ys, bins=1000, density=True)
+        ax[1].set_title('posterior')
+
+    return p_y, p_y_y
+    
+def J(delta_y):
+    p_y, p_y_y= simulation(delta_y, plot=False)
+    J= np.trace(p_y_y)- 2*abs(2*p_y[0]-1)
+    return J
+
+optimizer = BayesianOptimization(
+    f=J,
+    pbounds={'delta_y':(0., 5.)},
+    random_state=1,
+    bounds_transformer=None #SequentialDomainReductionTransformer()
+)
+
+optimizer.maximize(
+    init_points=20,
+    n_iter=40)
+delta_y_opt= optimizer.max['params']['delta_y']
+
+print(simulation(delta_y_opt, plot=True))

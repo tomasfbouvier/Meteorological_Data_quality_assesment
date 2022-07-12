@@ -64,3 +64,12 @@ except:
 
                 pass
     np.savetxt('../data_files/stations_correlations.csv', stations_correlations)
+    
+import matplotlib.pyplot as plt 
+import seaborn as sns;
+
+plt.figure(figsize=(20,20))
+sns.heatmap(stations_correlations, xticklabels=[], yticklabels=[], linewidth=0., 
+            cbar_kws={"shrink": 1., "pad": 0.01, "fraction":0.05})
+plt.tight_layout()
+plt.savefig('../Images/stations_correlations.png')

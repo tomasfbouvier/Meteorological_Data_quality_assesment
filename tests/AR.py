@@ -66,15 +66,19 @@ class ARTest(Test):
 
         y_flip= np.flip(ys, axis=None)
         
-        mod = ar_select_order(ys, maxlag=10, glob=True, seasonal=True, period= 8) 
+        mod = ar_select_order(ys, maxlag=10, glob=True, seasonal=False, period= 8) 
         #valid for temps
         
         print(mod.ar_lags)
         
         
         self.ar_past2 = ARIMA(endog=ys, order=(mod.ar_lags,0,0), seasonal_order=(0,0,0,0),
-                              trend='n', missing= 'drop').fit(low_memory=True).apply
-        self.ar_fut2 = ARIMA(y_flip, order=(mod.ar_lags,0,0),  trend='n',  missing= 'drop').fit(low_memory=True).apply
+                              trend=None, missing= 'drop').fit(low_memory=True).apply
+        
+        
+        self.ar_fut2 =  ARIMA(endog=y_flip, order=(mod.ar_lags,0,0), seasonal_order=(0,0,0,0),
+                              trend=None, missing= 'drop').fit(low_memory=True).apply
+        
         # TODO: Tengo que cargarme este mastodonte de memoria
         
         self.mod= int(len(mod.ar_lags)) #unnecesary variable
@@ -143,6 +147,97 @@ class ARTest(Test):
 
         
  
+#%%
+"""
+test=ARTest(6096)
+test.fit('train')
+test.optimize(1.5)
+""",
+"""
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.ar_model import ar_select_order
+"""
+"""
+xs, f= create_sets(6096.0, 'train')
+y=f(xs)
+
+from statsmodels.tsa.stattools import kpss,adfuller
+
+print('adfuller', adfuller(y))
+print('kpss', kpss(y))
+
+plt.figure()
+plt.plot(acf(STL(pd.Series(y, index= pd.date_range(start='1/1/2018',
+                                                   periods=len(y),
+                                                   freq='H'))).fit().seasonal, nlags=72), 'b')
+
+
+plt.tight_layout()
+
+plt.tick_params(direction='in')
+plt.xlabel('lags (h)')
+plt.ylabel('correlation')
+plt.savefig('../Images/acf_temp_seasonal_6096.png')
+
+plt.figure()
+plt.plot(acf(pd.Series(y, index= pd.date_range(start='1/1/2018',
+                                                   periods=len(y),
+                                                   freq='H')), nlags=72), 'b')
+plt.tight_layout()
+plt.xlabel('lags (h)')
+plt.ylabel('correlation')
+plt.tick_params(direction='in')
+plt.savefig('../Images/acf_temp_raw_6096.png')
+"""
+"""
+mod = ar_select_order(y, maxlag=10, glob=True, seasonal=True, period= 8) 
+#valid for temps
+
+print(mod.ar_lags)
+
+
+pred_past = ARIMA(endog=y, order=(mod.ar_lags,0,3), seasonal_order=(0,0,0,0),
+                      trend='n', missing= 'drop').fit(low_memory=True).predict()
+
+
+
+
+    
+plt.figure()
+plt.scatter(y[1:], pred_past[1:], c='b', s=2)
+
+plt.plot(np.linspace(min(y), max(y),10000), np.linspace(min(y), max(y),10000), 'r-')
+plt.plot(np.linspace(min(y), max(y),10000), np.linspace(min(y), max(y),10000)+1.5, 'r--', label= '$\pm 1.5 $ K')
+plt.plot(np.linspace(min(y), max(y),10000), np.linspace(min(y), max(y),10000)-1.5, 'r--')
+
+plt.xlabel('Ground truth (K)')
+plt.ylabel('Prediction (K)')
+plt.tight_layout()
+
+plt.legend(loc='best')
+plt.tick_params(direction='in')
+plt.savefig('../Images/yy_plot_temp.png')
+#%%
+
+from statsmodels.graphics.tsaplots import plot_acf
+
+
+
+series= pd.Series(y, index=pd.date_range("2018-01-01", periods=len(y), freq="3H"))
+
+
+plot_acf(series, title=None, auto_ylims=False,bartlett_confint=False)
+plt.tight_layout()
+plt.tick_params(direction='in')
+plt.xlabel('lags')
+plt.ylim((0., 1.1))
+plt.savefig('../Images/acf_press.png')
+
+plt.figure()
+
+
+plt.plot(acf(STL(series).fit().seasonal), 'b')
+"""
 #%%
 
 """
