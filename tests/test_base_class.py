@@ -32,14 +32,14 @@ class Test():
     @classmethod
     def init_cached(cls, filepath, station):
         filename=os.path.join(filepath, str(station)+'.pkl' )
-        print(filename)
+        #print(filename)
         if not os.path.exists(filename):  # create new
-            print('Constructor called, test for station ' + str(station) + ' created.')
+            #print('Constructor called, test for station ' + str(station) + ' created.')
             test = cls(station)
             
             return test
         else:
-            print('loaded file')
+            #print('loaded file')
             with open(filename, 'rb') as fp:
                 initial_data= cPickle.load(fp)
                 test=cls(station)

@@ -112,8 +112,8 @@ class SCT(Test):
 
 
 """
-test=BuddyCheck.init_cached('',6096)
-test.optimize(1.5)
+test= BuddyCheck.init_cached('',6096)
+test.optimize(3.5)
 """
 """
 test.save_cached('../data_files/test_pkls_1_5/SCT')

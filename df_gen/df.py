@@ -64,4 +64,4 @@ def Create_df(variable, start=None, end=None):
 
 
 
-Create_df('Press', start=np.datetime64('1999-01-01'), end=np.datetime64('1999-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl')
+Create_df('t2m', start=np.datetime64('2001-01-01'), end=np.datetime64('2001-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/deploy.pkl')

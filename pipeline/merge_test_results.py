@@ -18,7 +18,7 @@ from tests.my_titanlib import SCT, BuddyCheck
 
 def multi_test(station, df_name='deploy'):
     
-    path_test_properties= '../data_files/test_pkls_1_5'
+    path_test_properties= '../data_files/temp/test_pkls_3_5'
     
     tests=[]
     for dirname, _, filenames in os.walk(path_test_properties):
@@ -38,17 +38,17 @@ def multi_test(station, df_name='deploy'):
                     tests[-1].prepare_points(df_name)
                     
                 elif('BuddyCheck' in dirname):
-                    print(dirname)
+                    #print(dirname)
                     tests.append(BuddyCheck.init_cached(dirname, station))
                     tests[-1].prepare_points(df_name)
     
             #tests[-1].optimize(1.5, df_name='test')
     
-    print([test.confusion_matrix for test in tests])
-    print(tests)
+    #print([test.confusion_matrix for test in tests])
+    #print(tests)
     def evaluate(x,y):
         
-        pos_prob= 0.2 #flat prior ---> #TODO: adapt to well informed prior.
+        pos_prob= 0.01 #flat prior ---> #TODO: adapt to well informed prior.
         #pos_prob= 0.1 #2*(1-norm(scale= 0.9).cdf(1.5))
         for test in tests:
             idx= test.evaluate(x, y, test.params)
@@ -62,18 +62,18 @@ def multi_test(station, df_name='deploy'):
 
     
    
-
+"""
 import matplotlib.pyplot as plt
 from preprocessing.create_sets import create_sets
 
 #df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")
-aaa= multi_test(4201.0)
+aaa= multi_test(6104.0)
 #bbb= AR_test(4207)
-xs, f= create_sets(4201.0, 'deploy')
+xs, f= create_sets(6104.0, 'deploy')
 for i in range(len(xs)-100,  len(xs)):
     x= xs[i]; y= f(x);
     if (i== len(xs)-50 ):
-        y=y+1.5
+        y=y+3.5
         #plt.plot(x, y+3.5, 'k.')
         print('here')
         res= aaa(x,y)
@@ -87,7 +87,7 @@ for i in range(len(xs)-100,  len(xs)):
         plt.plot(x, y, 'r.')
     else:
         plt.plot(x, y, 'b.')
-
+"""
 """
     if(aaa(x, y)>0.9 and bbb(x,y, 1.477 )):
         aaa(x,y, printer=True)
