@@ -1,7 +1,7 @@
 Meteorological Data Quality Assesment
 (UNDER DEVELOPMENT)
 ===========
-Open-source Python implementation of a package for quality control of meteorological data. 
+Open-source Python implementation of a quality control system for meteorological data. 
 
 The context of this master thesis is DMI's NCKF (National Center for
 Climate Research) DANRA project [@DANRA]. The input data used in DANRA and for development purposes of this project includes in-situ observation of multiple variables (pressure, temperature, visibility, precipitations ...)
@@ -92,19 +92,41 @@ After optimisation and benchmarking, any test instance can be serialized to ```.
 |:--:|
 | Example: DANRA station network test visualisation. |
 
-References 
-====================
+Cite this work
+==============
 
-https://github.com/metno/titanlib/wiki
+If you used this package in your research and are interested in citing it here's how you do it:
+```
+@Misc{,
+    author = {Tomás F. Bouvier},
+    title = {Automatic detection of outliers in meteorological data},
+    year = {2022},
+    url = " https://github.com/tomasfbouvier/Meteorological_Data_quality_assesment"
+}
+```
 
-A Survey of Outlier Detection Methodologies.Victoria J. Hodge
+# Dependencies 
+
+* Numpy
+* Scipy
+* titanlib
+* matplotlib
+* pandas
+* statsmodels
+
+# References 
+
+
+* https://github.com/metno/titanlib/wiki
+
+* A Survey of Outlier Detection Methodologies.Victoria J. Hodge
 (vicky\@cs.york.ac.uk) and Jim Austin
 
-A study on preprocessing and assimilation of Netatmo data in a NWP
+* A study on preprocessing and assimilation of Netatmo data in a NWP
 system, Alessandro Falcione
 
-Yang, X, K. S. Hintz, C. P. Aros and B. Amstrup, 2021, Danish Regional
+* Yang, X, K. S. Hintz, C. P. Aros and B. Amstrup, 2021, Danish Regional
 Atmospheric Reanalysis: Final scientific report of the 2020 NCKF Work
 Package 3.2.1, Regional Reanalysis Pilot. DMI report 21-31, 2021.
 
-Scott D. Anderson, 2007, Combining Evidence using Bayes' Rule
+* Scott D. Anderson, 2007, Combining Evidence using Bayes' Rule
