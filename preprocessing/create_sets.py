@@ -13,12 +13,20 @@ from scipy.interpolate import interp1d
 import pandas as pd
 import numpy as np
 
-df_deploy=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")  
+df_deploy=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl")  
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl")  
 
 
+def sanity_check(df2):
 
+    df2.mask(df2['max'] < 184, inplace=True)
+    df2.mask(df2['max'] > 327, inplace=False)
+    return 
+    
+    
+    
+    return 
 def create_sets(station, df_name='train'):
     """
     Parameters
@@ -43,29 +51,28 @@ def create_sets(station, df_name='train'):
         
     df2=df[df['station']==station].copy()
     
-    df2[df2['max'] <= 0] = np.nan
-    
     #temp only:
     #df2[df2['max'] < 184] = np.nan
     #df2[df2['max'] > 327] = np.nan
     
     #print(station, ' ','min', np.nanmin(df2['max']), 'max',  np.nanmax(df2['max']))
 
+    sanity_check(df2)
     
     df2.sort_values(by='timestamp', inplace=True)
     
-    mean= np.mean(df2['max'].to_numpy())
-    std= np.std(df2['max'].to_numpy())
+    #mean= np.mean(df2['max'].to_numpy())
+    #std= np.std(df2['max'].to_numpy())
     
     #df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan #TODO: make it local
     
-    df2.dropna(inplace=True)
+    df2.dropna(subset=['max'],inplace=True)
     
     
     x=df2['timestamp']
     y=df2['max']
 
-    x = x.to_numpy('datetime64[h]')
+    x = x.to_numpy('datetime64[m]')
     y = y.to_numpy()
     
     

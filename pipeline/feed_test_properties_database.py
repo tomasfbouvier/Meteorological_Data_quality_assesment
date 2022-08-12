@@ -16,7 +16,7 @@ from tests.my_titanlib import BuddyCheck, SCT
 
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 
-path_test_properties= '../data_files/press/test_pkls_3_5'
+path_test_properties= '../data_files/temp/test_pkls_3_5'
 
 
 def feed_db(test_names, std, stations):
@@ -63,4 +63,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-#feed_db(['STCT'], 3.5, df_train['station'].unique()[:])
+feed_db(['STCT'], 3.5, df_train['station'].unique()[60:])

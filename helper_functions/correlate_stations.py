@@ -47,24 +47,35 @@ def correlate_signals(station1, station2, num=100000):
 stations=df['station'].unique()
 
 try:
-    stations_correlations= np.loadtxt('../data_files/stations_correlations.csv')
+    stations_correlations= pd.read_csv('../data_files/stations_correlations.csv')
 except:
     print('recalculating stations_correlations')
     stations= df['station'].unique()
-    stations_correlations= np.zeros((len(stations),len(stations)))
+    
+    
+    stations_correlations = []
+
     for i in range(len(stations)):
+        print(i, '/', len(stations))
         for j in range(len(stations)):
             
             #stations_correlations[i,j]= max(correlate_signals(stations[i],stations[j], 10000))
             try:
-                stations_correlations[i,j]= max(correlate_signals(stations[i],stations[j], 10000))
+                stations_correlations.append({'station1': stations[i], 
+                                              'station2':stations[j],
+                                              'r':max(correlate_signals(stations[i],stations[j], 10000))}) 
                 #print(stations_correlations[i,j])
             except:
-                stations_correlations[i,j]=0.
+                stations_correlations.append({'station1': stations[i], 
+                                              'station2':stations[j],
+                                              'r':0.}) 
 
                 pass
-    np.savetxt('../data_files/stations_correlations.csv', stations_correlations)
-    
+            
+    stations_correlations= pd.DataFrame(stations_correlations).to_csv('../data_files/stations_correlations.csv')
+    #np.savetxt('../data_files/stations_correlations2.csv', stations_correlations)
+
+"""
 import matplotlib.pyplot as plt 
 import seaborn as sns;
 
@@ -73,3 +84,4 @@ sns.heatmap(stations_correlations, xticklabels=[], yticklabels=[], linewidth=0.,
             cbar_kws={"shrink": 1., "pad": 0.01, "fraction":0.05})
 plt.tight_layout()
 plt.savefig('../Images/stations_correlations.png')
+"""

@@ -9,8 +9,6 @@ Created on Thu Apr 21 10:40:56 2022
 import sys
 sys.path.insert(0, '..')
 
-
-import pandas as pd
 from preprocessing.create_sets import create_sets
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.ar_model import ar_select_order
@@ -19,11 +17,10 @@ from statsmodels.tsa.stattools import acf
 
 
 import numpy as np
-import matplotlib.pyplot as plt # remove
+
 
 from tests.test_base_class import Test
 
-df=  pd.read_pickle("../df_gen/df.pkl")  
 class ARTest(Test):
     """
     
@@ -83,6 +80,7 @@ class ARTest(Test):
         
         self.mod= int(len(mod.ar_lags)) #unnecesary variable
         
+#df=  pd.read_pickle("../df_gen/df.pkl")  
         del(xs,f, ys, y_flip, mod)
         return 
     
@@ -94,6 +92,7 @@ class ARTest(Test):
     def remove_points(self):
         del(self.xs, self.ys, self.f)
         return 
+        #df=  pd.read_pickle("../df_gen/df.pkl")  
     
     def evaluate(self, x, y, params):
         """
@@ -109,13 +108,13 @@ class ARTest(Test):
         
         i_trgt= np.where(x==self.xs)[0][0]
         if(i_trgt<self.mod):
-            ys2= self.ys[:i_trgt+self.mod].copy() #TRIAL
+            ys2= self.ys[:i_trgt+self.mod].copy() #TRIAL#import matplotlib.pyplot as plt # remove
         elif(i_trgt>len(self.ys)-self.mod):
             ys2= self.ys[i_trgt-self.mod:].copy() #TRIAL
         else:
             ys2= self.ys[i_trgt-self.mod:i_trgt+self.mod].copy()
         
-        ys2[self.mod-1]=y
+        ys2[self.mod-1]=y#import matplotlib.pyplot as plt # remove
                 
         y_flip= np.flip(ys2, axis=None)
 
@@ -133,6 +132,7 @@ class ARTest(Test):
         else:
             return False
     
+#df=  pd.read_pickle("../df_gen/df.pkl")  
     def should_pickle(k):
         
         
@@ -148,8 +148,12 @@ class ARTest(Test):
         
  
 #%%
+
+
 """
-test=ARTest(6096)
+import matplotlib.pyplot as plt 
+df=  pd.read_pickle("../df_gen/df.pkl")  
+test=ARTest(6096)#import matplotlib.pyplot as plt # remove
 test.fit('train')
 test.optimize(1.5)
 """,

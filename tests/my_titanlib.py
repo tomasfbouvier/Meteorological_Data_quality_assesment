@@ -55,7 +55,7 @@ class BuddyCheck(Test):
                                  self.elev_gradient, params['min std'], 
                                  self.num_iterations, self.obs_to_check)[self.i]
 
-        return aux
+        return bool(aux)
 
 class SCT(Test):    
     
@@ -107,7 +107,7 @@ class SCT(Test):
             self.vertical_scale,pos, neg, self.eps2)[0][self.i]
         
         # TODO: find why I cannot add obs_to_check
-        return aux
+        return bool(aux)
     
 
 

@@ -12,7 +12,7 @@ import numpy as np
 from tests.test_base_class import Test
 
 try:
-    stations_correlations= np.loadtxt('../data_files/stations_correlations.csv')
+    stations_correlations= pd.read_csv('../data_files/stations_correlations.csv')
 except:
     print('station correlations file doesn´t exist')
 
@@ -47,21 +47,21 @@ class STCT(Test):
             - correlated stations: ID list of the stations used for the computation 
         """
         
-        df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")
-        stations= df['station'].unique()[:]
+        #df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.presspkl")
+        #stations= df['station'].unique()[:]
         
-        station_index= np.where(stations == self.station)[0][0]
         r_thr=1.
         
         correlated_stations=[]
     
         while(r_thr>0.9 and len(correlated_stations)<11):
-            correlated_stations= stations[stations_correlations[station_index,:]>r_thr]
+            correlated_stations= stations_correlations[stations_correlations['station1']==self.station][stations_correlations['r']>=r_thr]['station2'].to_list()
 
             r_thr-=1e-5
             
-        correlated_stations=np.delete(correlated_stations, np.where(correlated_stations == self.station) )
+        correlated_stations.remove(self.station)
         
+
         self.correlated_stations= dict.fromkeys(correlated_stations)
         
         for target_station in self.correlated_stations.keys():
@@ -69,7 +69,7 @@ class STCT(Test):
                 self.correlated_stations[target_station] = {
                     'pdf' : self.create_probability(target_station,'train'),
                     'f' : None,
-                    'r': stations_correlations[np.where(stations == self.station)[0][0],np.where(stations == target_station)[0][0]]}
+                    'r': stations_correlations[stations_correlations['station1']==self.station][stations_correlations['station2']==target_station]['r'].values[0]}
             except:
                 pass
         self.sum_r= sum([aux['r'] for aux in self.correlated_stations.values() if aux])
@@ -85,11 +85,11 @@ class STCT(Test):
     
     def evaluate(self, x, y, params):
         """
-        Parameters
-        ----------
+        Parameters5press
+        ----------press
             - (x,y): point coordinates in the time series of the station being analyzed
             - thr: score below which a station is labelled as outlier
-  
+  press
         Output
         -------
             - Boolean: test result (True/False)
@@ -106,7 +106,7 @@ class STCT(Test):
                 pass
         output_prob/= self.sum_r
         
-        # I DON'T KNOW IF THIS IS THE PROBABILITY THAT MAKES SENSE 
+        # I DON'T KNOW IF THIS IS THE PROBABILITY THAT MAKES SENSE press
         
        # return output_prob
               
@@ -117,7 +117,11 @@ class STCT(Test):
 """
 test=STCT.init_cached('',6096)
 test.fit('train')
-test.optimize(1.5)
+#test.prepare_points('train')
+test.optimize(3.5)
+"""
+
+"""
 #test.save_cached('sdfsdfsdf')
 test.save_cached('../data_files/temp/test_pkls_2_5/STCT')
 """

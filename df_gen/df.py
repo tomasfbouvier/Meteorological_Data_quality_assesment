@@ -25,7 +25,7 @@ def aux_df(name, dirname, columns, start=None, end=None):
         df= df[df['timestamp']<=end]
     df['file_type']= dirname
     return df
-
+M
 
 
 def Create_df(variable, start=None, end=None):
@@ -37,7 +37,7 @@ def Create_df(variable, start=None, end=None):
         columns=['station','timestamp','min', 'max', 'staturation']
     for dirname, _, filenames in os.walk('/home/tobou/data'):
         for filename in filenames:
-            
+            ¨
             try:
                 datetime_str= filename.split('.', 1)[0]
                 if(int(datetime_str[0:2])<23):
@@ -64,4 +64,4 @@ def Create_df(variable, start=None, end=None):
 
 
 
-Create_df('t2m', start=np.datetime64('2001-01-01'), end=np.datetime64('2001-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/deploy.pkl')
+Create_df('t2m', start=np.datetime64('2001-01-01'), end=np.datetime64('2001-01-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')
