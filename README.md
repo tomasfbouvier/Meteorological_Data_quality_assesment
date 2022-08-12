@@ -83,7 +83,7 @@ We provide a function in order to deploy the test suite and merge the different 
 For a set of N statistically independent tests:
 
 
-<img src="https://latex.codecogs.com/svg.image?P(B|T_{1},...,&space;T_{N})&space;=.\frac{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)}{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)&plus;P(G)&space;\prod_{i}^{N}&space;P(T_{i}|G)}" title="P(B|T_{1},..., T_{N}) =.\frac{P(B) \prod_{i}^{N} P(T_{i}|B)}{P(B) \prod_{i}^{N} P(T_{i}|B)+P(G) \prod_{i}^{N} P(T_{i}|G)}" />
+<img src="https://latex.codecogs.com/svg.image?P(B|T_{1},...,&space;T_{N})&space;=\frac{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)}{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)&plus;P(G)&space;\prod_{i}^{N}&space;P(T_{i}|G)}" title="P(B|T_{1},..., T_{N}) =.\frac{P(B) \prod_{i}^{N} P(T_{i}|B)}{P(B) \prod_{i}^{N} P(T_{i}|B)+P(G) \prod_{i}^{N} P(T_{i}|G)}" />
 
 ## 4. Visualisation and saving.
 After optimisation and benchmarking, any test instance can be serialized to ```.pkl``` files and stored with their optimal hyperparameters and benchmarking information. Moreover, ```test_vis``` provides a nice and broad overview of the tests performance.
@@ -105,7 +105,7 @@ If you used this package in your research and are interested in citing it here's
 }
 ```
 
-# Dependencies 
+# Dependencies https://user-images.githubusercontent.com/57238320/184324425-876ad715-e9c8-4d80-a622-9fed9cd83b6c.png
 
 * Numpy
 * Scipy
