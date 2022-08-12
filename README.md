@@ -79,8 +79,9 @@ The accuracy of each test is evaluated by injection of artificial outliers in th
 |:--:|
 | Ilustration of the noise tranisiton matrix as a linear transformation when working with 3 classes. The rescaling attempts to recover the original label distribution |
 
+From the confusion matrix, metrics and hence a cost function can be derived. ```Test.optimize``` tweaks the hyperparameters and carries a bayesian-optimization of the desired cost function. The bayesian optimizer deals better with computationally expensive evaluations of a sthocastic cost function, such in our case. 
 
-Each test class inherits from a parent that contains member functions in order to automatically benchmark the tests and find the hyperparameters that achieve both the maximum hit rate and minimum false alarm rate. The benchmarking steps are performed by artifical outlier injection in the station's time-series.
+Practically, the above cited functions are members of the parent class ```Test```. If your test is ready you only need to call them in order to get in return the optimal hyperparameters and the associated confusion matrix. 
 
 ## 3. A Bayesian approach for merging multiple test evidences
 
@@ -90,6 +91,14 @@ For a set of N statistically independent tests:
 
 
 <img src="https://latex.codecogs.com/svg.image?P(B|T_{1},...,&space;T_{N})&space;=\frac{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)}{P(B)&space;\prod_{i}^{N}&space;P(T_{i}|B)&plus;P(G)&space;\prod_{i}^{N}&space;P(T_{i}|G)}" title="P(B|T_{1},..., T_{N}) =.\frac{P(B) \prod_{i}^{N} P(T_{i}|B)}{P(B) \prod_{i}^{N} P(T_{i}|B)+P(G) \prod_{i}^{N} P(T_{i}|G)}" />
+
+$P(T_{i}|B)$ corresponds to the likelihood of an incorrect observation been flagged correctly. This is nothing but the confusion matrix estimated in the optimisation phase.
+
+$P(B)$ corresponds to the prior probability that a given observation is incorrect. It is not trivial to estimate. In our case we estimate it from documents and calibration reports of the stations in our network. 
+$P(B|T_{1},...,T_{N})$ corresponds to the posterior distribution, i.e  probability that given a set of results issued by the suite of tests the observation is incorrect. This is the return value of our system.
+
+```multi_bayes``` loops over the pkl files in a give directory and creates the suite of tests for a given station returning an evaluation function which predicts the latter probability. 
+
 
 ## 4. Visualisation and saving.
 After optimisation and benchmarking, any test instance can be serialized to ```.pkl``` files and stored with their optimal hyperparameters and benchmarking information. Moreover, ```test_vis``` provides a nice and broad overview of the tests performance.
