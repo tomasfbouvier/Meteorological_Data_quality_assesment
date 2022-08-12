@@ -88,9 +88,9 @@ For a set of N statistically independent tests:
 ## 4. Visualisation and saving.
 After optimisation and benchmarking, any test instance can be serialized to ```.pkl``` files and stored with their optimal hyperparameters and benchmarking information. Moreover, ```test_vis``` provides a nice and broad overview of the tests performance.
 
-|![](https://user-images.githubusercontent.com/57238320/184106269-6cb3bafb-6e58-43c5-b558-78247eec3c99.png)|
+|![](https://user-images.githubusercontent.com/57238320/184324425-876ad715-e9c8-4d80-a622-9fed9cd83b6c.png)|
 |:--:|
-| Example: DANRA station network test visualisation. |
+| Example visualisation. Test accuracies after tuning. The Y-axis represents the stations ID. Variable: Temperature|
 
 Cite this work
 ==============
