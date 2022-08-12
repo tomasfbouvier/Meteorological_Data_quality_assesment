@@ -75,8 +75,7 @@ Values are compared with model forecasts.
 ## 2. An automatic benchmarking and hyperparameter tuning framework 
 
 The accuracy of each test is evaluated by injection of artificial outliers in the stationś time-series. An optimal test will flag correctly the injected outliers while keeping intact the original values. ```calculate_acc``` iterates this procedure in order to estimate the confusion matrix of the test. Additionally we attempt to account for contamination of the original time-series by rescaling the confusion matrix by a noise-transition matrix.
-
-![]([https://user-images.githubusercontent.com/57238320/184327104-89866fc2-1f65-45fa-b84f-ee6e3625e7ba.png](https://user-images.githubusercontent.com/57238320/184328494-50c0c8d9-764f-424a-b259-8f64067349e1.png))
+![](https://user-images.githubusercontent.com/57238320/184328494-50c0c8d9-764f-424a-b259-8f64067349e1.png)
 |:--:|
 | Ilustration of the noise tranisiton matrix as a linear transformation when working with 3 classes. The rescaling attempts to recover the original label distribution |
 
@@ -112,8 +111,7 @@ If you used this package in your research and are interested in citing it here's
 }
 ```
 
-# Dependencies https://user-images.githubusercontent.com/57238320/184324425-876ad715-e9c8-4d80-a622-9fed9cd83b6c.png
-
+# Dependencies 
 * Numpy
 * Scipy
 * titanlib
