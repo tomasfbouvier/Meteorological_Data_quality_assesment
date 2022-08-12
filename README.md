@@ -72,9 +72,16 @@ Besides the core of our approach, we implemented a set of tests that probe the d
 - Model consistency (to be implemented):
 Values are compared with model forecasts.
 
-## 2. An automatic hyperparameter tuning framework 
+## 2. An automatic benchmarking and hyperparameter tuning framework 
 
-Each test class inherits from a parent that contains member functions in order to automatically find the hyperparameters that achieve both the maximum hit rate and minimum false alarm rate. The benchmarking steps are performed by artifical outlier injection in the station's time-series. We also pave the way for prior series contamination accountace.
+The accuracy of each test is evaluated by injection of artificial outliers in the stationś time-series. An optimal test will flag correctly the injected outliers while keeping intact the original values. ```calculate_acc``` iterates this procedure in order to estimate the confusion matrix of the test. Additionally we attempt to account for contamination of the original time-series by rescaling the confusion matrix by a noise-transition matrix.
+
+![]([https://user-images.githubusercontent.com/57238320/184327104-89866fc2-1f65-45fa-b84f-ee6e3625e7ba.png](https://user-images.githubusercontent.com/57238320/184328494-50c0c8d9-764f-424a-b259-8f64067349e1.png))
+|:--:|
+| Ilustration of the noise tranisiton matrix as a linear transformation when working with 3 classes. The rescaling attempts to recover the original label distribution |
+
+
+Each test class inherits from a parent that contains member functions in order to automatically benchmark the tests and find the hyperparameters that achieve both the maximum hit rate and minimum false alarm rate. The benchmarking steps are performed by artifical outlier injection in the station's time-series.
 
 ## 3. A Bayesian approach for merging multiple test evidences
 
@@ -129,4 +136,8 @@ system, Alessandro Falcione
 Atmospheric Reanalysis: Final scientific report of the 2020 NCKF Work
 Package 3.2.1, Regional Reanalysis Pilot. DMI report 21-31, 2021.
 
+* Zhang et al., 2021, learning noise transition matrix from only noisy labels via total variation regularization
+
 * Scott D. Anderson, 2007, Combining Evidence using Bayes' Rule
+
+
