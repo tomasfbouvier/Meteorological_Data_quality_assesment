@@ -10,6 +10,9 @@ import os
 import numpy as np
 import pandas as pd
 
+
+#from settings import variable
+
 import sys
 sys.path.insert(0, '..')
 
@@ -25,7 +28,7 @@ def aux_df(name, dirname, columns, start=None, end=None):
         df= df[df['timestamp']<=end]
     df['file_type']= dirname
     return df
-M
+
 
 
 def Create_df(variable, start=None, end=None):
@@ -35,9 +38,9 @@ def Create_df(variable, start=None, end=None):
         columns=['station','timestamp','min', 'max']
     if(variable== 't2m'):
         columns=['station','timestamp','min', 'max', 'staturation']
-    for dirname, _, filenames in os.walk('/home/tobou/data'):
+    for dirname, _, filenames in os.walk('/home/tobou/data/combined'):
         for filename in filenames:
-            ¨
+            
             try:
                 datetime_str= filename.split('.', 1)[0]
                 if(int(datetime_str[0:2])<23):
@@ -54,14 +57,14 @@ def Create_df(variable, start=None, end=None):
                     df2=aux_df(str(dirname+'/'+filename), dirname, columns, start, end)
                     df=df.append(df2, ignore_index=True)
             except:
+                print(f"error reading {filename}")
                 pass                       
             
             
-    #df_true= df[df['file_type']=='../data_files/data/Carra'] # Corrected data from Bjarne
-    df=df[df['file_type']=='/home/tobou/data/combined']
+
 
     return df
 
 
 
-Create_df('t2m', start=np.datetime64('2001-01-01'), end=np.datetime64('2001-01-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')
+#Create_df('t2m', start=np.datetime64('2001-01-01'), end=np.datetime64('2001-01-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')

@@ -8,17 +8,17 @@ Created on Tue May 17 14:23:05 2022
 
 import sys
 sys.path.insert(0, '..')
-
+from settings import variable
 import os
 from tests.AR import ARTest
-from tests.STCT import STCT #ISSUE WITH CONFLICTING FILES????
+from tests.STCT import STCT 
 from scipy.stats import norm
 from tests.my_titanlib import SCT, BuddyCheck
 
 
 def multi_test(station, df_name='deploy'):
     
-    path_test_properties= '../data_files/temp/test_pkls_3_5'
+    path_test_properties= '../data_files/'+variable+'/test_pkls_3_5'
     
     tests=[]
     for dirname, _, filenames in os.walk(path_test_properties):
@@ -26,7 +26,7 @@ def multi_test(station, df_name='deploy'):
         for filename in filenames:
             if(str(station) in filename):
                 
-                print(dirname)
+                #print(dirname)
                 if('ARTest' in dirname):
                     tests.append(ARTest.init_cached(dirname, station))
                     tests[-1].prepare_points(df_name)
@@ -45,13 +45,13 @@ def multi_test(station, df_name='deploy'):
     
             #tests[-1].optimize(1.5, df_name='test')
     
-    print([test.confusion_matrix for test in tests])
+    log=[test.confusion_matrix for test in tests]
     #print(tests)
 
     
     #pos_prob= 0.1 #2*(1-norm(scale= 0.9).cdf(1.5))
     def evaluate(x,y):
-        pos_prob= 0.1 #flat prior ---> #TODO: adapt to well informed prior.
+        pos_prob= 0.1 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
         #print(x,y)
         for test in tests:
             idx= test.evaluate(x, y, test.params)
@@ -61,7 +61,7 @@ def multi_test(station, df_name='deploy'):
             #print(test.confustationsion_matrix[idx, 0])#(test.confusion_matrix[idx, 0]*pos_prob  + test.confusion_matrix[idx, 1]*(1-pos_prob)))
             pos_prob = pos_prob*test.confusion_matrix[0, idx]/(test.confusion_matrix[0, idx]*pos_prob  + test.confusion_matrix[1, idx]*(1-pos_prob)) # Bayes update
         return pos_prob
-    return evaluate
+    return evaluate, log
 
     
 

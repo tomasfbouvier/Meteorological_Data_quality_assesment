@@ -8,7 +8,7 @@ Created on Thu Apr  7 16:10:31 2022
 import sys
 sys.path.insert(0, '..')
 import os
-
+from settings import variable
 from tests.AR import ARTest
 from tests.STCT import STCT     # TODO: see how to make it dynamical for new tests without reinstalling the full package
 import pandas as pd
@@ -16,7 +16,7 @@ from tests.my_titanlib import BuddyCheck, SCT
 
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 
-path_test_properties= '../data_files/temp/test_pkls_3_5'
+path_test_properties= '../data_files/'+ variable +'/test_pkls_3_5'
 
 
 def feed_db(test_names, std, stations):
@@ -53,7 +53,7 @@ def feed_db(test_names, std, stations):
 
             
             except:
-                print('there was an error')
+                raise Exception(f'An error ocurred while feeding the database for station {station}')
                 continue
             test.save_cached(dirname) #TODO make sort that if dir doesnt exist it creates it
                 
@@ -63,4 +63,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-feed_db(['STCT'], 3.5, df_train['station'].unique()[60:])
+#feed_db(['STCT'], 3.5, df_train['station'].unique()[60:])

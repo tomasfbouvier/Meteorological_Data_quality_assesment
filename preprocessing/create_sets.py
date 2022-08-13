@@ -6,6 +6,7 @@ Created on Fri Apr  1 12:33:44 2022
 @author: tomasfernandezbouvier
 """
 import sys
+from settings import variable
 
 sys.path.insert(0, '..')
 
@@ -17,16 +18,20 @@ df_deploy=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_asse
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl")  
 
-
+if variable == 't2m':
+    low_lim  = 184.0
+    high_lim = 327.0
+elif variable == 'Press':
+    low_lim  = 870.0
+    high_lim = 1083.8
+else:
+    raise Exception("The variable is unknow by the program")
 def sanity_check(df2):
+    
+    df2.mask(df2['max'] < low_lim, inplace=True)
+    df2.mask(df2['max'] > 327.0, inplace=False)
+    return 
 
-    df2.mask(df2['max'] < 184, inplace=True)
-    df2.mask(df2['max'] > 327, inplace=False)
-    return 
-    
-    
-    
-    return 
 def create_sets(station, df_name='train'):
     """
     Parameters
@@ -74,8 +79,6 @@ def create_sets(station, df_name='train'):
 
     x = x.to_numpy('datetime64[m]')
     y = y.to_numpy()
-    
-    
 
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
 
