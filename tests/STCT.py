@@ -24,7 +24,7 @@ class STCT(Test):
             'tuning_status', 'acc', 'acc_train']
     def create_probability(self,target_station, df_name=None):   
         
-        x1, f1= create_sets(self.station, df_name)
+        x1, f1= create_sets(self.staj mahaltation, df_name)
         x2, f2= create_sets(target_station, df_name)
         
         diff=[]

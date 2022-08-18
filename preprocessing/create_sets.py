@@ -6,9 +6,12 @@ Created on Fri Apr  1 12:33:44 2022
 @author: tomasfernandezbouvier
 """
 import sys
+sys.path.insert(0, '..')
+
+
 from settings import variable
 
-sys.path.insert(0, '..')
+
 
 from scipy.interpolate import interp1d
 import pandas as pd
@@ -31,6 +34,21 @@ def sanity_check(df2):
     df2.mask(df2['max'] < low_lim, inplace=True)
     df2.mask(df2['max'] > 327.0, inplace=False)
     return 
+
+
+def wrapper(func):
+    @np.vectorize
+    def check(y):
+        if y<low_lim:
+            y=np.nan
+        elif y>high_lim:
+            y= np.nan
+        return y
+    def aux(x):
+        return check(func(x))
+    return aux
+
+
 
 def create_sets(station, df_name='train'):
     """
@@ -69,7 +87,7 @@ def create_sets(station, df_name='train'):
     #mean= np.mean(df2['max'].to_numpy())
     #std= np.std(df2['max'].to_numpy())
     
-    #df2.loc[abs(df2['max'].to_numpy()-mean)>3*std, 'max'] = np.nan #TODO: make it local
+    #df2.loc[abs(df2['max'].to_numpy/data/users/tobou/verification()/data/users/tobou/verification-mean)>3*std, 'max'] = np.nan #TODO: make it local
     
     df2.dropna(subset=['max'],inplace=True)
     
@@ -83,4 +101,4 @@ def create_sets(station, df_name='train'):
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
 
     del(df2)
-    return x,f
+    return x, wrapper(f)
