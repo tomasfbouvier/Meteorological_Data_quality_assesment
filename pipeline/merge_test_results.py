@@ -31,9 +31,9 @@ def multi_test(station, df_name='deploy'):
                     tests.append(ARTest.init_cached(dirname, station))
                     tests[-1].prepare_points(df_name)
                 
-                #elif('STCT' in dirname):
-                #    tests.append(STCT.init_cached(dirname, station))
-                #    tests[-1].prepare_points(df_name)
+                elif('STCT' in dirname):
+                    tests.append(STCT.init_cached(dirname, station))
+                    tests[-1].prepare_points(df_name)
                 elif('SCT' in dirname):
                     tests.append(SCT.init_cached(dirname, station))
                     tests[-1].prepare_points(df_name)
@@ -54,12 +54,16 @@ def multi_test(station, df_name='deploy'):
         pos_prob= 0.1 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
         #print(x,y)
         for test in tests:
-            idx= test.evaluate(x, y, test.params)
-            #print(test)
-            #print(idx)
-            idx= int(not(idx))
+            try:
+                idx= test.evaluate(x, y, test.params)
+                #print(test)
+                #print(idx)
+            
+                idx= int(not(idx))
             #print(test.confustationsion_matrix[idx, 0])#(test.confusion_matrix[idx, 0]*pos_prob  + test.confusion_matrix[idx, 1]*(1-pos_prob)))
-            pos_prob = pos_prob*test.confusion_matrix[0, idx]/(test.confusion_matrix[0, idx]*pos_prob  + test.confusion_matrix[1, idx]*(1-pos_prob)) # Bayes update
+                pos_prob = pos_prob*test.confusion_matrix[0, idx]/(test.confusion_matrix[0, idx]*pos_prob  + test.confusion_matrix[1, idx]*(1-pos_prob)) # Bayes update
+            except:
+                pass
         return pos_prob
     return evaluate, log
 
@@ -70,7 +74,7 @@ import matplotlib.pyplot as plt
 from preprocessing.create_sets import create_sets
 
 #df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")
-aaa= multi_test(6104.0)
+aaa, log= multi_test(6104.0)
 #bbb= AR_test(4207)
 xs, f= create_sets(6104.0, 'deploy')
 for i in range(len(xs)-100,  len(xs)):
@@ -83,7 +87,8 @@ for i in range(len(xs)-100,  len(xs)):
         
     res=aaa(x,y)
     print(res)
-
+"""
+"""
 
 
     if(res>0.5):

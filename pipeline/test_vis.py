@@ -5,6 +5,7 @@ Created on Thu Jun  9 13:39:42 2022
 
 @author: tobou
 """
+
 import sys
 sys.path.insert(0, '..')
 
@@ -16,7 +17,7 @@ import matplotlib.pyplot as plt
 
 df=pd.DataFrame(columns=['test', 'station', 'acc_train', 'acc'])
 
-parent_dir_name_base= '../data_files/press/test_pkls_'
+parent_dir_name_base= '../data_files/Press/test_pkls_'
 
 parent_dir_names=['1_5', '2_5', '3_5']
 
@@ -32,6 +33,7 @@ for i, name in enumerate(parent_dir_names):
             print(dirname)
             with open(os.path.join(dirname,filename), 'rb') as fp:
                 data= cPickle.load(fp)
+
                 df=df.append(pd.DataFrame({'test': dirname.replace(parent_dir_name + '/', '')
                                     , 'station': int( filename.replace('.0.pkl', '')), 
                                     'acc_train': data['acc_train'], 'acc': data['acc']}, index=[0]))

@@ -99,6 +99,6 @@ def create_sets(station, df_name='train'):
     y = y.to_numpy()
 
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
-
+    f=wrapper(f)
     del(df2)
-    return x, wrapper(f)
+    return x, f

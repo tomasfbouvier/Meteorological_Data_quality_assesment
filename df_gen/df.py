@@ -9,13 +9,10 @@ Created on Fri Apr  1 12:36:14 2022
 import os
 import numpy as np
 import pandas as pd
-
-
-#from settings import variable
-
 import sys
 sys.path.insert(0, '..')
 
+from settings import variable
 
 
 def aux_df(name, dirname, columns, start=None, end=None):
@@ -31,7 +28,7 @@ def aux_df(name, dirname, columns, start=None, end=None):
 
 
 
-def Create_df(variable, start=None, end=None):
+def Create_df(start=None, end=None):
     df=pd.DataFrame();
     
     if(variable== 'Press'):
@@ -67,4 +64,4 @@ def Create_df(variable, start=None, end=None):
 
 
 
-Create_df('Press', start=np.datetime64('1999-01-01'), end=np.datetime64('1999-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl')
+Create_df(start=np.datetime64('1997-01-01'), end=np.datetime64('1997-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl')

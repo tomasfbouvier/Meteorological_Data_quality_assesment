@@ -15,7 +15,7 @@ from bayes_opt import SequentialDomainReductionTransformer
 
 from preprocessing.create_sets import create_sets
 import os
-import _pickle as cPickle
+import dill as cPickle
 import numpy as np
 
 
@@ -69,7 +69,7 @@ class Test():
         removable_attributes= ['xs', 'ys', 'f', 'prepare_points', 'evaluate', 
                                'optimize', 'fit'] #Maybe move this to daughters
         
-        
+        test.prepare_points('train')
         for attribute in dir(self):
             if(attribute in removable_attributes):
                 delattr(self,attribute)
@@ -133,7 +133,7 @@ class Test():
             
             # Explored ranges: >4.5, >3.5, >2.5, >1.5
             
-            out= 0#2.*np.random.rand()-1. #2*std*np.random.rand()-std
+            out= 0.#2.*np.random.rand()-1. #2*std*np.random.rand()-std
             
             if(np.random.rand()<0.5):
                 out-=std
@@ -155,8 +155,10 @@ class Test():
             
             ys[idx_out]+= out
             
-            test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
-            
+            try:
+                test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+            except:
+                continue
             
             
             if(test_result==True and outlier_status==True):
@@ -175,7 +177,7 @@ class Test():
         #print(confusion_matrix)
         
         confusion_matrix= mult@confusion_matrix
-        
+
         #print(confusion_matrix)
         #print(confusion_matrix)
         #confusion_matrix2= np.array([[TP, FN],[FP, TN]])/(n_trials+4)
@@ -235,13 +237,16 @@ class Test():
         xs, f = create_sets(self.station, df_name='test') # 'train' ????
         ys= f(xs)
         
-        self.prepare_points('test')
-        
+        try:
+            self.prepare_points('test')
+        except:
+            print('there was an error in benchmark')
+            self.confusion_matrix= np.nan
         self.params= optimizer.max['params']
         self.acc_train= optimizer.max['target']
         self.confusion_matrix= self.calculate_acc(xs, ys,params=self.params,std=std, n_trials= 1000)
         self.acc= (self.confusion_matrix[0,0]+self.confusion_matrix[1,1])/(sum(sum(self.confusion_matrix)))
-        print(self.confusion_matrix)
+        print(self.confusion_matrix, self.acc)
         
         del(xs, ys, f)
         return 

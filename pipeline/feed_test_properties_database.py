@@ -53,7 +53,7 @@ def feed_db(test_names, std, stations):
 
             
             except:
-                raise Exception(f'An error ocurred while feeding the database for station {station}')
+                print(f'An error ocurred while feeding the database for station {station}')
                 continue
             test.save_cached(dirname) #TODO make sort that if dir doesnt exist it creates it
                 
@@ -63,4 +63,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-#feed_db(['STCT'], 3.5, df_train['station'].unique()[60:])
+feed_db(['ARTest', 'STCT'], 3.5, df_train['station'].unique()[:])

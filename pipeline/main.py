@@ -55,6 +55,8 @@ Create_df(variable, start=np.datetime64(output_start_date),
               '/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')
 
 df_output = pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl") 
+#df_output['timestamp']=df_output['timestamp'].astype('datetime64[m]', copy=False)
+print(df_output['max'])
 stations = df_output['station'].unique()
 
 print(stations)
@@ -104,32 +106,29 @@ for _,_, filenames in os.walk(dirname):2001-01-31'
 correction_info = []
 
 
-for station in stations[:4]:
+for station in stations[:]:
     print(f'station: {station}')
-    try:
-        test_ensemble, log = multi_test(station)
-        n = 0; c = 0;b = 0
-        for (idx,row) in df_output[df_output['station'] == station].iterrows():
-            n += 1
-            #idx(row[0])
-            x = row[1].to_numpy('datetime64[h]')
-            y = np.array(row[3])
-            
-            if(preprocessing(y)):
-                
-                
-                if(test_ensemble(x,y)>0.5):
-                    df_output.iloc[idx]['max'] = -1
-                    c+=1
-            else:
-                b+=1                
-                
-                df_output.iloc[idx]['max'] = -1
-            
-        correction_info.append({'station':station, 'points':n, 'bad':b, 'corrected':c, 'acc':
-                                [np.trace(a)/2. for a in log]})
     
+    test_ensemble, log = multi_test(station); print(log)
+    n = 0; c = 0;b = 0
+    for (idx,row) in df_output[df_output['station'] == station].iterrows():
+        n += 1
+        #idx(row[0])
+        x =np.datetime64(row[1].to_numpy('datetime64[m]'), 'm')
+        y = np.array(row[3])
 
+        if(preprocessing(y)):
+
+            if(test_ensemble(x,y)>0.5):
+                df_output.iloc[idx]['max'] = -1
+                c+=1
+        else:
+            b+=1                
+            df_output.iloc[idx]['max'] = -1
+    correction_info.append({'station':station, 'points':n, 'bad':b, 'corrected':c, 'acc':
+                            [np.trace(a)/2. for a in log]})
+    
+"""
     except: 
         correction_info.append({'station':station, 'points':-1, 'corrected':-1, 'acc':
                                 -1})
@@ -137,7 +136,7 @@ for station in stations[:4]:
         continue 
     
 
-
+"""
 
 
 

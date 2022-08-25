@@ -17,6 +17,7 @@ from tests.test_base_class import Test
 
 
 
+
 class BuddyCheck(Test):
     pbounds = {'min std': (.5,.6),'threshold': (0.,3.), 'radius': (30000, 100000)}
     to_save=['confusion_matrix', 'params', 'tuning_status', 'acc', 'acc_train']
@@ -37,7 +38,7 @@ class BuddyCheck(Test):
         values=[]
         for f in self.fs:
             value=f(x)
-            if(value>870.0 and value<1083.8):
+            if(not np.isnan(value)):
                 values.append(value.tolist())
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
@@ -90,14 +91,12 @@ class SCT(Test):
         values=[]
         for f in self.fs:
             value=f(x)
-            if(value>184 and value<327):
+            if(not np.isnan(value)):
                 values.append(value.tolist())
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(280) #This is not good
-        values[self.i]=y.tolist()
-            
+                values.append(1013)
         values[self.i]=y.tolist()
 
         #print(values)
@@ -112,8 +111,8 @@ class SCT(Test):
 
 
 
-test= BuddyCheck.init_cached('/home/tobou/Desktop/Meteorological_Data_quality_assesment/data_files/Press/test_pkls_3_5/BuddyCheck',6096.0)
-test.optimize(3.5)
+#test= SCT.init_cached('/home/tobou/Desktop/Meteorological_Data_quality_assesment/data_files/Press/test_pkls_3_5/BuddyCheck',6096.0)
+#test.optimize(3.5)
 
 """
 test.save_cached('../data_files/test_pkls_1_5/SCT')
