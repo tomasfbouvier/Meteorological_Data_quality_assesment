@@ -180,7 +180,7 @@ class ARTest(Test):
 #%%
 
 
-
+"""
 #df=  pd.read_pickle("../df_gen/df.pkl")  
 test=ARTest(6193)#import matplotlib.pyplot as plt # remove
 test.fit('train')
@@ -189,4 +189,4 @@ import time
 start_time = time.time()
 test.optimize(3.5)
 print("--- %s seconds ---" % (time.time() - start_time))
-
+"""

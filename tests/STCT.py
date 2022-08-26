@@ -31,7 +31,6 @@ class STCT(Test):
         
         for x in x1:
             diff.append(abs(f2(x)-f1(x)))
-            diff.append(f2(x)-f1(x))
         return gaussian_kde(diff)
 
     def fit(self, thr=0.1):
@@ -76,7 +75,7 @@ class STCT(Test):
                     'r': stations_correlations[stations_correlations['station1']==self.station][stations_correlations['station2']==target_station]['r'].values[0]}
                 #self.pbounds[str(target_station)]=(0., 1.)
             except:
-                self.correlated_stations[target_station] = np.nan
+                self.correlated_stations[target_station] = None
                 pass
         
         #self.correlated_stations= {k: self.correlated_stations[k] for k in 
@@ -85,7 +84,13 @@ class STCT(Test):
 
         #if(len(correlated_stations)<2):
         #    raise Exception("no enough correlated stations")
-            
+        
+        
+        aux_dict={k:v for k, v in self.correlated_stations.items() if v }
+        self.correlated_stations.clear(); self.correlated_stations.update(aux_dict)
+        
+        del(aux_dict)
+        
         self.sum_r= sum([aux['r'] for aux in self.correlated_stations.values() if aux])
         
         return
@@ -112,13 +117,13 @@ class STCT(Test):
         output_prob=0.; sum_r= self.sum_r.copy()
         for target_station in self.correlated_stations:
             #_, f2= create_sets(correlated_stations[i], df)
-            diff=abs(self.correlated_stations[target_station]['f'](x))
+            diff=self.correlated_stations[target_station]['f'](x)
 
             if(np.isnan(diff)):
                 sum_r-=self.correlated_stations[target_station]['r']
                 continue
             else:
-                diff-=y
+                diff=abs(diff-y)
 
 
             #output_prob+= self.correlated_stations[target_station]['pdf'].integrate_box_1d(diff, np.inf)*self.correlated_stations[target_station]['r']
@@ -138,12 +143,12 @@ class STCT(Test):
 
        # return output_prob
               
-
-test=STCT.init_cached('',4201.0)
+"""
+test=STCT.init_cached('',6096.0)
 test.fit('train')
 test.optimize(3.5)
 
-"""
+
 test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
 #test.prepare_points('train')
 """

@@ -63,4 +63,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-feed_db(['ARTest', 'STCT'], 3.5, df_train['station'].unique()[:])
+feed_db(['STCT'], 3.5, df_train['station'].unique()[:])

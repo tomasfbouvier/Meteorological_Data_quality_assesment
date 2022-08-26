@@ -37,10 +37,12 @@ for i, name in enumerate(parent_dir_names):
                 df=df.append(pd.DataFrame({'test': dirname.replace(parent_dir_name + '/', '')
                                     , 'station': int( filename.replace('.0.pkl', '')), 
                                     'acc_train': data['acc_train'], 'acc': data['acc']}, index=[0]))
+
             #print(dirname.replace('../data_files/test_pkls_2_5' + '/', ''),filename)
     l=df['station'].tolist()
     d = dict([(y,x+1) for x,y in enumerate(sorted(l))])
-
+    
+    print(df[df['station']==6096.0])#[df['test']=='STCT'])
     im=axs[i].scatter(df['test'].tolist(), [d[x] for x in l], c=df['acc'].tolist())
     axs[i].set_yticks( list(d.values()))
     axs[i].set_yticklabels([str(x) for x in list(d.keys())])
