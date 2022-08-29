@@ -19,8 +19,9 @@ except:
 
 class STCT(Test):
     
-    pbounds = {'p0': (0., 1.)}
+    pbounds = {'p0': (-1., 1.)}
     #pbounds={}
+
     to_save=['confusion_matrix', 'params', 'correlated_stations','sum_r','tuning_status', 'acc', 'acc_train']
     def create_probability(self,target_station, df_name=None):   
         
@@ -55,7 +56,7 @@ class STCT(Test):
 
         correlated_stations=[]
     
-        while(r_thr>0.9 and len(correlated_stations)<11):
+        while(r_thr>0.9 and len(correlated_stations)<8):
             correlated_stations= stations_correlations[stations_correlations['station1']==self.station][stations_correlations['r']>=r_thr]['station2'].to_list()
 
             r_thr-=1e-5
@@ -73,7 +74,7 @@ class STCT(Test):
                     'pdf' : self.create_probability(target_station,'train'),
                     'f' : None,
                     'r': stations_correlations[stations_correlations['station1']==self.station][stations_correlations['station2']==target_station]['r'].values[0]}
-                #self.pbounds[str(target_station)]=(0., 1.)
+                self.pbounds[str(target_station)]=(-1., 1.)
             except:
                 self.correlated_stations[target_station] = None
                 pass
@@ -114,7 +115,7 @@ class STCT(Test):
         -------
             - Boolean: test result (True/False)
         """
-        output_prob=0.; sum_r= self.sum_r.copy()
+        output_prob=params['p0']; sum_r= self.sum_r.copy()
         for target_station in self.correlated_stations:
             #_, f2= create_sets(correlated_stations[i], df)
             diff=self.correlated_stations[target_station]['f'](x)
@@ -127,28 +128,31 @@ class STCT(Test):
 
 
             #output_prob+= self.correlated_stations[target_station]['pdf'].integrate_box_1d(diff, np.inf)*self.correlated_stations[target_station]['r']
-            output_prob+= self.correlated_stations[target_station]['pdf'].evaluate(diff)*self.correlated_stations[target_station]['r']
-            
+            output_prob+= self.correlated_stations[target_station]['pdf'].evaluate(diff)*params[str(target_station)]#self.correlated_stations[target_station]['r']
+        #print(output_prob) 
         if(sum_r>0):
-            
-            output_prob/= sum_r
-            #print(output_prob)
-            if (output_prob<params['p0']):
+            if np.sign(output_prob)>0.:
                 return True
             else:
                 return False
+            #output_prob/= sum_r
+            #print(output_prob)
+            #if (output_prob<params['p0']):
+            #    return True
+            #else:
+            #    return False
             
         else:
             raise Exception("test inconclusive")
 
        # return output_prob
               
-"""
-test=STCT.init_cached('',6096.0)
+
+test=STCT.init_cached('',6193.0)
 test.fit('train')
 test.optimize(3.5)
 
-
+"""
 test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
 #test.prepare_points('train')
 """

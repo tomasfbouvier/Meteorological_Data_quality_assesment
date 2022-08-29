@@ -13,6 +13,7 @@ sys.path.insert(0, '..')
 from bayes_opt import BayesianOptimization
 from bayes_opt import SequentialDomainReductionTransformer
 
+
 from preprocessing.create_sets import create_sets
 import os
 import dill as cPickle
@@ -25,7 +26,7 @@ class Test():
     confusion_matrix = None 
     params= None
     tuning_status=False
-    
+
     
     to_save=[]
     
@@ -155,10 +156,12 @@ class Test():
             
             ys[idx_out]+= out
             
-            try:
-                test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
-            except:
-                continue
+            #try:
+            #    test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+            #except:
+            #    continue
+            test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+
             
             
             if(test_result==True and outlier_status==True):
@@ -219,17 +222,20 @@ class Test():
             del(confusion_matrix, xs, ys)
             return J
         
+        
         optimizer = BayesianOptimization(
             f=calculate_J,
             pbounds=self.pbounds,
             random_state=1,
-            bounds_transformer=SequentialDomainReductionTransformer()
+            bounds_transformer=None#SequentialDomainReductionTransformer()
         )
 
         optimizer.maximize(
             init_points=20,
             n_iter=40,
         )
+
+            
         # TODO: consider add different number of trials for random exploration depending on number of hyperparams 
             #print(calculate_acc(x,f,test, [optimizer.max['params']['p0'],optimizer.max['params']['p1'],optimizer.max['params']['p2']],1000, stds[i]))
         
