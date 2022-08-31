@@ -51,7 +51,7 @@ def multi_test(station, df_name='deploy'):
     
     #pos_prob= 0.1 #2*(1-norm(scale= 0.9).cdf(1.5))
     def evaluate(x,y):
-        pos_prob= 0.1 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
+        pos_prob= 0.21 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
         #print(x,y)
         for test in tests:
             try:

@@ -50,13 +50,13 @@ def pipeline(mode='w', variable='Press'):
 
 """
 
-Create_df(variable, start=np.datetime64(output_start_date),
+Create_df(start=np.datetime64(output_start_date),
           end=np.datetime64(output_end_date)).to_pickle(
               '/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')
 
 df_output = pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl") 
 #df_output['timestamp']=df_output['timestamp'].astype('datetime64[m]', copy=False)
-print(df_output['max'])
+#print(df_output['max'])
 stations = df_output['station'].unique()
 
 print(stations)
@@ -106,7 +106,7 @@ for _,_, filenames in os.walk(dirname):2001-01-31'
 correction_info = []
 
 
-for station in stations[:]:
+for station in stations[-40:]:
     print(f'station: {station}')
     
     test_ensemble, log = multi_test(station); print(log)
@@ -118,7 +118,6 @@ for station in stations[:]:
         y = np.array(row[3])
 
         if(preprocessing(y)):
-
             if(test_ensemble(x,y)>0.5):
                 df_output.iloc[idx]['max'] = -1
                 c+=1
@@ -166,7 +165,7 @@ df_output['timestamp']= df_output['timestamp'].apply(lambda x: convert_dt_str(x)
 if variable=='Press':
     fmt = ['%d', '%d', '%f', '%f']
 if variable == 't2m':
-    fm = ['%d', '%d', '%f', '%f', '%f']
+    fmt = ['%d', '%d', '%f', '%f', '%f']
 
 for day in days:
     df_to_write= df_output[df_output['timestamp'].apply(lambda x: convert_dt_str(day) in x)]

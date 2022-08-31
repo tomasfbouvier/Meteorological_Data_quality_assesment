@@ -32,6 +32,8 @@ def feed_db(test_names, std, stations):
                 #TODO: consider remove test creation from function.
                 if(test_name=='ARTest'):
                     test=ARTest.init_cached(dirname, station)
+                    if(test.mod<2):
+                        test.tuning_status=False
                     test.fit('train')
                 elif(test_name=='STCT'):
                     test=STCT.init_cached(dirname, station)
@@ -53,14 +55,15 @@ def feed_db(test_names, std, stations):
 
             
             except:
+            
                 print(f'An error ocurred while feeding the database for station {station}')
                 continue
             test.save_cached(dirname) #TODO make sort that if dir doesnt exist it creates it
                 
-    
+            
             
         
     return 
 
 
-feed_db(['STCT'], 3.5, df_train['station'].unique()[:])
+feed_db(['ARTest'], 3.5,df_train['station'].unique()[:])

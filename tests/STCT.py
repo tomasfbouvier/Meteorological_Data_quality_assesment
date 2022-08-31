@@ -19,9 +19,9 @@ except:
 
 class STCT(Test):
     
-    pbounds = {'p0': (-1., 1.)}
+    
     #pbounds={}
-
+    
     to_save=['confusion_matrix', 'params', 'correlated_stations','sum_r','tuning_status', 'acc', 'acc_train']
     def create_probability(self,target_station, df_name=None):   
         
@@ -51,19 +51,25 @@ class STCT(Test):
         
         #df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.presspkl")
         #stations= df['station'].unique()[:]
-        
+        self.pbounds = {'p0': (-1., 1.)}
+        #print(self.pbounds)
         r_thr=1.
 
         correlated_stations=[]
-    
-        while(r_thr>0.9 and len(correlated_stations)<8):
+        
+        i=0
+        while(len(correlated_stations)<6):
             correlated_stations= stations_correlations[stations_correlations['station1']==self.station][stations_correlations['r']>=r_thr]['station2'].to_list()
-
-            r_thr-=1e-5
-
-
-
             
+            r_thr-=1e-4
+            i+=1
+            if(i>1000):
+            #print(r_thr)
+            #if( len(correlated_stations)>8):
+                break
+
+
+        
         correlated_stations.remove(self.station)
         
         self.correlated_stations= dict.fromkeys(correlated_stations)
@@ -147,15 +153,13 @@ class STCT(Test):
 
        # return output_prob
               
-
-test=STCT.init_cached('',6193.0)
+"""
+test=STCT.init_cached('',6096.0)
 test.fit('train')
 test.optimize(3.5)
-
 """
-test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
+#test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
 #test.prepare_points('train')
-"""
 """
 test.optimize(3.5)
 
@@ -167,7 +171,5 @@ print(test.calculate_acc(xs, f(xs), test.params, 3.5, 1000))
 #test.save_cached('sdfsdfsdf')
 test.save_cached('../data_files/temp/test_pkls_2_5/STCT')
 """
-"""
-del(test
-test= STCT.init_cached('../data_files/test_pkls_1_5/STCT',6096)
-"""
+
+#test= STCT.init_cached('../data_files/Press/test_pkls_3_5/STCT',4310.0)

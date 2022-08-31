@@ -6,7 +6,7 @@ Created on Sat Aug 13 16:19:46 2022
 @author: tobou
 """
 
-variable = 'Press'
+variable = 't2m'
 
 
 train_start_date = '1997-01-01'

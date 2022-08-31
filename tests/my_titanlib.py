@@ -43,7 +43,7 @@ class BuddyCheck(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(1013)
+                values.append(285)
         values[self.i]=y.tolist()
         
         #print(values)
@@ -96,7 +96,7 @@ class SCT(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(1013)
+                values.append(300)
         values[self.i]=y.tolist()
 
         #print(values)

@@ -12,7 +12,7 @@ import pandas as pd
 import sys
 sys.path.insert(0, '..')
 
-from settings import variable
+from settings import variable, train_start_date, train_end_date, test_start_date, test_end_date, output_start_date, output_end_date
 
 
 def aux_df(name, dirname, columns, start=None, end=None):
@@ -64,4 +64,15 @@ def Create_df(start=None, end=None):
 
 
 
-Create_df(start=np.datetime64('1997-01-01'), end=np.datetime64('1997-12-31')).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl')
+Create_df(start=np.datetime64(train_start_date), end=np.datetime64(
+    train_end_date)).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl')
+
+
+Create_df(start=np.datetime64(test_start_date), end=np.datetime64(
+    test_end_date)).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_test.pkl')
+ 
+
+Create_df(start=np.datetime64(output_start_date), end=np.datetime64(
+    output_end_date)).to_pickle('/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_deploy.pkl')
+
+

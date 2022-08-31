@@ -22,9 +22,9 @@ import numpy as np
 
 class Test():
     
-    pbounds = None
+    #pbounds = None
     confusion_matrix = None 
-    params= None
+    #params= None
     tuning_status=False
 
     
@@ -146,7 +146,8 @@ class Test():
         TP=1; FP=1; TN=1; FN=1; #Trying to smooth confusion matrix
         outlier_status=False
         
-        for trial in range(n_trials):
+        trial=0; escaper=0
+        while trial < n_trials:
             if(trial%2==0):
                 idx_out, out = create_outlier(ys)
                 outlier_status=True
@@ -156,11 +157,14 @@ class Test():
             
             ys[idx_out]+= out
             
-            #try:
-            #    test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
-            #except:
-            #    continue
-            test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+            try:
+                test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
+            except:
+                escaper+=1
+                if escaper>=100:
+                    break
+                continue
+            #test_result= self.evaluate(xs[idx_out], ys[idx_out], params)
 
             
             
@@ -173,6 +177,8 @@ class Test():
             elif(test_result==False and outlier_status==True):
                 FN+=1; 
             ys[idx_out]-= out
+            
+            trial+=1
                 
         TPR= TP/(TP+FN); TNR= TN/(TN+FP); FNR= FN/(TP+FN); FPR=FP/(TN+FP)
         confusion_matrix= np.array([[TPR, FNR],[FPR, TNR]])

@@ -15,9 +15,12 @@ import _pickle as cPickle
 import numpy as np
 import matplotlib.pyplot as plt
 
+
+from settings import variable
+
 df=pd.DataFrame(columns=['test', 'station', 'acc_train', 'acc'])
 
-parent_dir_name_base= '../data_files/Press/test_pkls_'
+parent_dir_name_base= '../data_files/'+variable+'/test_pkls_'
 
 parent_dir_names=['1_5', '2_5', '3_5']
 
@@ -51,7 +54,7 @@ for i, name in enumerate(parent_dir_names):
     
     del(d, l)
 axs[1].set_yticklabels([]) 
-axs[2].set_yticklabels([])         
+#axs[2].set_yticklabels([])         
 def divide(x):
     return int(x/100)
 
