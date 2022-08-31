@@ -9,6 +9,7 @@ Created on Thu Apr 21 10:40:56 2022
 import sys
 sys.path.insert(0, '..')
 
+from settings import variable
 from preprocessing.create_sets import create_sets
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.ar_model import ar_select_order
@@ -67,7 +68,10 @@ class ARTest(Test):
         
         
         mean=np.mean(ys); std=np.std(ys)
-        ys=[ i for i in ys if (i>(mean-2*std) and i<(mean+2*std))]
+        
+        
+        if(variable=='t2m'):
+            ys=[ i for i in ys if (i>(mean-2*std) and i<(mean+2*std))]
         
         thr=int(0.25*len(ys)); 
         #ys+=  3.*np.random.randn(len(ys)) # Add some noise for robust fit
@@ -75,10 +79,11 @@ class ARTest(Test):
         y_flip= np.flip(ys, axis=None)
         
         mod = ar_select_order(ys[:thr], maxlag=10, glob=False, seasonal=False, period=None) 
-        if(len(mod.ar_lags)<2):
-            self.lags=[1,2,3]
-        else:
-            self.lags= mod.ar_lags
+        #if(len(mod.ar_lags)<1):
+        #    print('low lag length, extending...')
+        #    self.lags=[1,2,3]
+        #else:
+        self.lags= mod.ar_lags
         self.mod= int(len(self.lags))
         
         
@@ -212,7 +217,7 @@ import matplotlib.pyplot as plt
 #plt.figure()
 #plt.plot(xs,f(xs), 'b.')
 
-test=ARTest.init_cached('',4351.0)
+test=ARTest.init_cached('',4208.0)
 test.fit('train')
 test.optimize(3.5)
 """
