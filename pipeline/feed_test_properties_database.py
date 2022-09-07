@@ -32,8 +32,6 @@ def feed_db(test_names, std, stations):
                 #TODO: consider remove test creation from function.
                 if(test_name=='ARTest'):
                     test=ARTest.init_cached(dirname, station)
-                    if(test.mod<2):
-                        test.tuning_status=False
                     test.fit('train')
                 elif(test_name=='STCT'):
                     test=STCT.init_cached(dirname, station)

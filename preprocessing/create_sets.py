@@ -88,7 +88,7 @@ def create_sets(station, df_name='train'):
     #std= np.std(df2['max'].to_numpy())
     
     #df2.loc[abs(df2['max'].to_numpy/data/users/tobou/verification()/data/users/tobou/verification-mean)>3*std, 'max'] = np.nan #TODO: make it local
-    
+
     df2.dropna(subset=['max'],inplace=True)
     
     
@@ -102,3 +102,4 @@ def create_sets(station, df_name='train'):
     f=wrapper(f)
     del(df2)
     return x, f
+

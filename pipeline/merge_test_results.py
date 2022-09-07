@@ -51,7 +51,12 @@ def multi_test(station, df_name='deploy'):
     
     #pos_prob= 0.1 #2*(1-norm(scale= 0.9).cdf(1.5))
     def evaluate(x,y):
-        pos_prob= 0.21 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
+        if variable=='Press':
+            pos_prob=0.1
+        elif variable=='t2m':
+            pos_prob= 0.21 #flat prior ---> #TODO: adapt to well informed prior and transfer to config
+        else:
+            raise(Exception("variable not defined"))
         #print(x,y)
         for test in tests:
             try:
@@ -69,29 +74,33 @@ def multi_test(station, df_name='deploy'):
 
     
 
-"""
+
 import matplotlib.pyplot as plt
 from preprocessing.create_sets import create_sets
 
 #df= pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df.pkl")
-aaa, log= multi_test(6104.0)
+"""
+aaa, log= multi_test(6151.0)
 #bbb= AR_test(4207)
-xs, f= create_sets(6104.0, 'deploy')
-for i in range(len(xs)-100,  len(xs)):
+xs, f= create_sets(6151.0, 'deploy')
+
+
+for i in range(0,  len(xs)):
     x= xs[i]; y= f(x);
+    plt.plot(x,f(x), 'b.')
+    
     if (i== len(xs)-50 ):
-        y=y+3.5
+        #y=y+3.5
         #plt.plot(x, y+3.5, 'k.')
-        print('here')
         res= aaa(x,y)
         
     res=aaa(x,y)
-    print(res)
-"""
-"""
+    #print(res)
 
 
-    if(res>0.5):
+
+    if(res>0.9):
+        print(res)
         plt.plot(x, y, 'r.')
     else:
         plt.plot(x, y, 'b.')

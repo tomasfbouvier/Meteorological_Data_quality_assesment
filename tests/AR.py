@@ -79,11 +79,11 @@ class ARTest(Test):
         y_flip= np.flip(ys, axis=None)
         
         mod = ar_select_order(ys[:thr], maxlag=10, glob=False, seasonal=False, period=None) 
-        #if(len(mod.ar_lags)<1):
-        #    print('low lag length, extending...')
-        #    self.lags=[1,2,3]
-        #else:
-        self.lags= mod.ar_lags
+        if(len(mod.ar_lags)<2):
+            print('low lag length, extending...')
+            self.lags=[1,2]
+        else:
+            self.lags= mod.ar_lags
         self.mod= int(len(self.lags))
         
         

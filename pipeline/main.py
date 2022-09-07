@@ -118,7 +118,7 @@ for station in stations[-40:]:
         y = np.array(row[3])
 
         if(preprocessing(y)):
-            if(test_ensemble(x,y)>0.5):
+            if(test_ensemble(x,y)>0.9):
                 df_output.iloc[idx]['max'] = -1
                 c+=1
         else:

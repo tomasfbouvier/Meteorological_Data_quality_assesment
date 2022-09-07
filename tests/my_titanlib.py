@@ -11,6 +11,7 @@ sys.path.insert(0, '..')
 
 from preprocessing.create_sets import create_sets
 from helper_functions.helper_functions_titanlib import prepare_test
+from settings import variable
 import titanlib
 import numpy as np
 from tests.test_base_class import Test
@@ -43,7 +44,12 @@ class BuddyCheck(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(285)
+                if variable=='t2m':
+                    values.append(285)
+                elif variable=='Press':
+                    values.append(1013)
+                else:
+                    raise(Exception("variable not defined"))
         values[self.i]=y.tolist()
         
         #print(values)
@@ -111,7 +117,7 @@ class SCT(Test):
 
 
 
-#test= SCT.init_cached('/home/tobou/Desktop/Meteorological_Data_quality_assesment/data_files/Press/test_pkls_3_5/BuddyCheck',6096.0)
+#test= SCT.init_cached('',6096.0)
 #test.optimize(3.5)
 
 """
