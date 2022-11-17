@@ -5,6 +5,9 @@
 *.jpeg
 *.png
 *.pkl
+*.csv
+*.jpg
+
 /data_files
 /Images
 
