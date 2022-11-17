@@ -52,7 +52,7 @@ def Create_df(start=None, end=None):
                         continue
                     #print(filename)
                     df2=aux_df(str(dirname+'/'+filename), dirname, columns, start, end)
-                    df=df.append(df2, ignore_index=True)
+                    df=pd.concat([df,df2], ignore_index=True)
             except:
                 print(f"error reading {filename}")
                 pass                       

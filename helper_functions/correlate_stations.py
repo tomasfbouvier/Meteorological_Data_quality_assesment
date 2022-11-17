@@ -16,7 +16,7 @@ from preprocessing.create_sets import create_sets
 import numpy as np
 import scipy.signal as signal
 
-df=  pd.read_pickle("../df_gen/df_train.pkl")  
+df=  pd.read_pickle("../df_gen/df_test.pkl")  
 def correlate_signals(station1, station2, num=100000):  
     """
     Parameters
@@ -47,7 +47,7 @@ def correlate_signals(station1, station2, num=100000):
 stations=df['station'].unique()
 
 try:
-    stations_correlations= pd.read_csv('../data_files/stations_correlations.csv')
+    stations_correlations= pd.read_csv('../data_files/stations_correlations2.csv')
 except:
     print('recalculating stations_correlations')
     stations= df['station'].unique()
@@ -72,16 +72,20 @@ except:
 
                 pass
             
-    stations_correlations= pd.DataFrame(stations_correlations).to_csv('../data_files/stations_correlations.csv')
+    #stations_correlations= pd.DataFrame(stations_correlations).to_csv('../data_files/stations_correlations.csv')
     #np.savetxt('../data_files/stations_correlations2.csv', stations_correlations)
 
-"""
+
 import matplotlib.pyplot as plt 
 import seaborn as sns;
 
-plt.figure(figsize=(20,20))
-sns.heatmap(stations_correlations, xticklabels=[], yticklabels=[], linewidth=0., 
+
+plt.figure(figsize=(5,5))
+mmm=stations_correlations[stations_correlations['station1']<5000][stations_correlations['station2']<5000]
+ticklabels=mmm['station1'].unique()
+mmm=np.reshape(mmm['r'].values,(36,36))
+mmm=np.nan_to_num(mmm)
+sns.heatmap(mmm, xticklabels=ticklabels, yticklabels=ticklabels, linewidth=0., 
             cbar_kws={"shrink": 1., "pad": 0.01, "fraction":0.05})
 plt.tight_layout()
-plt.savefig('../Images/stations_correlations.png')
-"""
+#plt.savefig('../Images/stations_correlations.png')

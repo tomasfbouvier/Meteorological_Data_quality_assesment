@@ -35,8 +35,9 @@ class BuddyCheck(Test):
         
 
     def evaluate(self,x,y,params):
-
+        """
         values=[]
+
         for f in self.fs:
             value=f(x)
             if(not np.isnan(value)):
@@ -51,7 +52,18 @@ class BuddyCheck(Test):
                 else:
                     raise(Exception("variable not defined"))
         values[self.i]=y.tolist()
+        """
         
+        values=[]
+        for f in self.fs:
+            value=f(x)
+            if(not np.isnan(value)):
+                values.append(value.tolist())
+            elif(len(values)):
+                values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
+            else:
+                values.append(300)
+        values[self.i]=y.tolist()
         #print(values)
         
         
@@ -102,7 +114,7 @@ class SCT(Test):
             elif(len(values)):
                 values.append(np.mean(values)) #DOES THIS MAKE ANY SENSE?????
             else:
-                values.append(300)
+                values.append(285)
         values[self.i]=y.tolist()
 
         #print(values)
@@ -117,7 +129,7 @@ class SCT(Test):
 
 
 
-#test= SCT.init_cached('',6096.0)
+#test= BuddyCheck.init_cached('',6183.0)
 #test.optimize(3.5)
 
 """

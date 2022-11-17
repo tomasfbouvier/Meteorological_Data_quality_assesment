@@ -119,11 +119,11 @@ for station in stations[-40:]:
 
         if(preprocessing(y)):
             if(test_ensemble(x,y)>0.9):
-                df_output.iloc[idx]['max'] = -1
+                df_output.iloc[idx]['min'] = -1
                 c+=1
         else:
             b+=1                
-            df_output.iloc[idx]['max'] = -1
+            df_output.iloc[idx]['min'] = -1
     correction_info.append({'station':station, 'points':n, 'bad':b, 'corrected':c, 'acc':
                             [np.trace(a)/2. for a in log]})
     

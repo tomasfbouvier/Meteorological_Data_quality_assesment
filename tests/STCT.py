@@ -76,6 +76,7 @@ class STCT(Test):
         
         for target_station in self.correlated_stations.keys():
             try:
+                
                 self.correlated_stations[target_station] = {
                     'pdf' : self.create_probability(target_station,'train'),
                     'f' : None,
@@ -153,23 +154,51 @@ class STCT(Test):
 
        # return output_prob
               
-"""
-test=STCT.init_cached('',6096.0)
-test.fit('train')
-test.optimize(3.5)
-"""
-#test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
-#test.prepare_points('train')
-"""
-test.optimize(3.5)
 
-xs, f= create_sets(6104.0, 'deploy')
-test.prepare_points('deploy')
-print(test.calculate_acc(xs, f(xs), test.params, 3.5, 1000))
-"""
-"""
-#test.save_cached('sdfsdfsdf')
-test.save_cached('../data_files/temp/test_pkls_2_5/STCT')
-"""
-
-#test= STCT.init_cached('../data_files/Press/test_pkls_3_5/STCT',4310.0)
+#test=STCT.init_cached('',6096.0)
+#test.fit('train')
+if __name__=="__main__":
+    """
+    test.optimize(3.5)
+    """
+    #test.save_cached('../data_files/Press/test_pkls_3_5/STCT')
+    #test.prepare_points('train')
+    """
+    test.optimize(3.5)
+    
+    xs, f= create_sets(6104.0, 'deploy')
+    test.prepare_points('deploy')
+    print(test.calculate_acc(xs, f(xs), test.params, 3.5, 1000))
+    """
+    """
+    #test.save_cached('sdfsdfsdf')
+    test.save_cached('../data_files/temp/test_pkls_2_5/STCT')
+    """
+    import matplotlib.pyplot as plt
+    def create_probability(my_station,target_station, df_name=None):   
+    
+           x1, f1= create_sets(my_station, df_name)
+           x2, f2= create_sets(target_station, df_name)
+    
+           diff=[]
+    
+           for x in x1:
+               diff.append(abs(f2(x)-f1(x)))
+           return gaussian_kde(diff), diff
+    
+    plt.figure(figsize=(10,5))
+    
+    x=np.linspace(0., 15.0, 1000)
+    kde, diffs=create_probability(6096.0, 6052.0, 'train')
+    plt.hist(diffs, bins=30, alpha=0.8, density=True, color='b', label="strong correlation")
+    plt.plot(x,kde(x), color='b')
+    kde, diffs=create_probability(6096.0, 6190.0, 'train')
+    plt.hist(diffs, bins=30, alpha=0.8, density=True, color='y',  label="weak correlation")
+    plt.plot(x,kde(x), c='y')
+    plt.xlim(0, 15)
+    plt.xlabel("$|f(t)- g(t)|$", {'fontsize':14})
+    plt.ylabel("$P(|f(t)- g(t)|)$", {'fontsize':14})
+    plt.legend(loc="best", fontsize=14)
+    plt.tight_layout()
+    plt.savefig("../Images/KDE_weak_strong.png", dpi=300.)
+    #test= STCT.init_cached('../data_files/Press/test_pkls_3_5/STCT',4310.0)

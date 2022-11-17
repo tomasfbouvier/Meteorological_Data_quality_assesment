@@ -78,7 +78,7 @@ class ARTest(Test):
 
         y_flip= np.flip(ys, axis=None)
         
-        mod = ar_select_order(ys[:thr], maxlag=10, glob=False, seasonal=False, period=None) 
+        mod = ar_select_order(ys[:thr], maxlag=10, glob=False, seasonal=True, period=24) 
         if(len(mod.ar_lags)<2):
             print('low lag length, extending...')
             self.lags=[1,2]
@@ -91,8 +91,10 @@ class ARTest(Test):
         
         print(self.lags)
         
+        if variable=='t2m':
+            seasonal_order=24
         
-        self.ar_past2 = ARIMA(endog=ys[thr:], order=(self.lags,0,0), seasonal_order=(0,0,0,0),
+        self.ar_past2 = ARIMA(endog=ys[thr:], order=(self.lags,0,0), seasonal_order=(1,0,0,seasonal_order),
                               trend=None, missing= 'drop').fit(low_memory=True)
         weight_past= 1.001**self.ar_past2.llf #arbitraty
         self.ar_past2= self.ar_past2.apply
@@ -103,7 +105,7 @@ class ARTest(Test):
         #plt.plot(np.linspace(min(ys), max(ys), 100),np.linspace(min(ys), max(ys), 100)+3.5, 'r--')
         #plt.plot(np.linspace(min(ys), max(ys), 100),np.linspace(min(ys), max(ys), 100)-3.5, 'r--')
         
-        self.ar_fut2 =  ARIMA(endog=y_flip[:thr], order=(self.lags,0,0), seasonal_order=(0,0,0,0),
+        self.ar_fut2 =  ARIMA(endog=y_flip[:thr], order=(self.lags,0,0), seasonal_order=(1,0,0,seasonal_order),
                               trend=None, missing= 'drop').fit(low_memory=True)
         weight_fut= 1.001**self.ar_fut2.llf #arbitraty
         
@@ -216,13 +218,12 @@ import matplotlib.pyplot as plt
 #xs,f=create_sets(4382)
 #plt.figure()
 #plt.plot(xs,f(xs), 'b.')
-
-test=ARTest.init_cached('',4208.0)
-test.fit('train')
-test.optimize(3.5)
+"""
+#test=ARTest.init_cached('',6183.0)
+#test.fit('train')
+#test.optimize(3.5)
 """
 
-"""
 #df=  pd.read_pickle("../df_gen/df.pkl")  
 test=ARTest(6193)#import matplotlib.pyplot as plt # remove
 test.fit('train')

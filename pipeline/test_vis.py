@@ -24,8 +24,8 @@ parent_dir_name_base= '../data_files/'+variable+'/test_pkls_'
 
 parent_dir_names=['1_5', '2_5', '3_5']
 
-fig, axs= plt.subplots(nrows=1, ncols= 3, figsize=(10,15), sharey=False)
-fig.tight_layout()
+fig, axs= plt.subplots(nrows=1, ncols= 3, figsize=(12,20), sharey=False)
+#fig.tight_layout()
 plt.subplots_adjust(wspace=0.2, hspace=0)
 
 for i, name in enumerate(parent_dir_names):
@@ -34,19 +34,22 @@ for i, name in enumerate(parent_dir_names):
         for filename in filenames:
             
             print(dirname)
-            with open(os.path.join(dirname,filename), 'rb') as fp:
-                data= cPickle.load(fp)
-
-                df=df.append(pd.DataFrame({'test': dirname.replace(parent_dir_name + '/', '')
-                                    , 'station': int( filename.replace('.0.pkl', '')), 
-                                    'acc_train': data['acc_train'], 'acc': data['acc']}, index=[0]))
-
-            #print(dirname.replace('../data_files/test_pkls_2_5' + '/', ''),filename)
-    l=df['station'].tolist()
+                
+            try:
+                with open(os.path.join(dirname,filename), 'rb') as fp:
+                    data= cPickle.load(fp)
+    
+                    df=df.append(pd.DataFrame({'test': dirname.replace(parent_dir_name + '/', '')
+                                        , 'station': int( filename.replace('.0.pkl', '')), 
+                                        'acc_train': data['acc_train'], 'acc': data['acc']}, index=[0]))
+            except:
+                pass
+                #print(dirname.replace('../data_files/test_pkls_2_5' + '/', ''),filename)
+        l=df[df['station']>6000]['station'].tolist()
     d = dict([(y,x+1) for x,y in enumerate(sorted(l))])
     
-    print(df[df['station']==6096.0])#[df['test']=='STCT'])
-    im=axs[i].scatter(df['test'].tolist(), [d[x] for x in l], c=df['acc'].tolist())
+    #print(df[df['station']==6096.0])#[df['test']=='STCT'])
+    im=axs[i].scatter(df[df['station']>6000]['test'].tolist(), [d[x] for x in l], c=df[df['station']>6000]['acc'].tolist())
     axs[i].set_yticks( list(d.values()))
     axs[i].set_yticklabels([str(x) for x in list(d.keys())])
     axs[i].tick_params(direction='in')
@@ -54,7 +57,7 @@ for i, name in enumerate(parent_dir_names):
     
     del(d, l)
 axs[1].set_yticklabels([]) 
-#axs[2].set_yticklabels([])         
+axs[2].set_yticklabels([])         
 def divide(x):
     return int(x/100)
 
@@ -64,7 +67,7 @@ def divide(x):
 
 fig.colorbar(im)
 
-plt.savefig('../Images/test_acc_vis_press.png')
+plt.savefig('../Images/test_acc_vis_t2m.png', dpi=300.)
 
 
 df3= pd.DataFrame(np.loadtxt('../data_files/data/SynopFrIngres'),columns=['station', 'init', 'end', 'lat', 'lon', 'height'])

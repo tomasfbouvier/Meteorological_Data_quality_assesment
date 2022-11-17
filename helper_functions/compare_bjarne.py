@@ -61,23 +61,23 @@ plt.tight_layout()
 axs[0].plot(
     df_deploy[df_deploy["station"] == station]["timestamp"],
     df_deploy[df_deploy["station"] == station]["max"],
-    "b.",The reason why no observation is flagged is because being in Greenland, there is a big chance that only the TCT was performing well. However the accuracy is still not 100%. Therefore, even if the output of the test is correct, the information contribution is not enough to raise the prior probability (15%) to the posterior over which I determine that the observation is an outlier (90%). In other words, what Bayes says is that the TCT by itself is not enough to trigger the alarm. The test should be supplied with other independent pieces of evidence such as SCT, but unfortunately in Greenland it is rather hard to obtain good results for it.
+    "b."
 )
 axs[1].plot(
     df_deploy[df_deploy["station"] == station]["timestamp"],
     df_deploy[df_deploy["station"] == station]["max"],
-    "b.",
+    "b."
 )
 
 axs[0].plot(
     df_deploy[df_deploy["station"] == station][df_bjarne["max"] < 0.0]["timestamp"],
     df_deploy[df_deploy["station"] == station][df_bjarne["max"] < 0.0]["max"],
-    "r.",
+    "r."
 )
 axs[1].plot(
     df_deploy[df_deploy["station"] == station][df_corrected["max"] < 0.0]["timestamp"],
     df_deploy[df_deploy["station"] == station][df_corrected["max"] < 0.0]["max"],
-    "r.",
+    "r."
 )
 
 # axs[0].set_title('Bjarne\'s detection', pad=-14, loc=None)

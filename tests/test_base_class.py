@@ -237,8 +237,8 @@ class Test():
         )
 
         optimizer.maximize(
-            init_points=20,
-            n_iter=40,
+            init_points=40,
+            n_iter=60,
         )
 
             

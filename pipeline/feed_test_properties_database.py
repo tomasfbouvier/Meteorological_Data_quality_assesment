@@ -14,9 +14,11 @@ from tests.STCT import STCT     # TODO: see how to make it dynamical for new tes
 import pandas as pd
 from tests.my_titanlib import BuddyCheck, SCT
 
+#variable='t2m'
+
 df_train=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesment/df_gen/df_train.pkl")  
 
-path_test_properties= '../data_files/'+ variable +'/test_pkls_3_5'
+path_test_properties= '../data_files/'+ variable +'/test_pkls_2_5'
 
 
 def feed_db(test_names, std, stations):
@@ -64,4 +66,4 @@ def feed_db(test_names, std, stations):
     return 
 
 
-feed_db(['ARTest'], 3.5,df_train['station'].unique()[:])
+feed_db(['ARTest', 'BuddyCheck','SCT', 'STCT'], 2.5,[6183])

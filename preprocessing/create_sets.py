@@ -24,15 +24,21 @@ df_test=  pd.read_pickle("/home/tobou/Desktop/Meteorological_Data_quality_assesm
 if variable == 't2m':
     low_lim  = 184.0
     high_lim = 327.0
+    
+    subframe='min'
+    
 elif variable == 'Press':
     low_lim  = 870.0
     high_lim = 1083.8
+    
+    subfrane='max'
 else:
     raise Exception("The variable is unknow by the program")
 def sanity_check(df2):
     
-    df2.mask(df2['max'] < low_lim, inplace=True)
-    df2.mask(df2['max'] > 327.0, inplace=False)
+    df2.mask(df2[subframe] < low_lim, inplace=True)
+    df2.mask(df2[subframe] > high_lim, inplace=False)
+
     return 
 
 
@@ -71,9 +77,11 @@ def create_sets(station, df_name='train'):
         df= df_deploy
     else:
         print('there was an error with the df name')
-        
+     
+    
     df2=df[df['station']==station].copy()
     
+
     #temp only:
     #df2[df2['max'] < 184] = np.nan
     #df2[df2['max'] > 327] = np.nan
@@ -81,7 +89,6 @@ def create_sets(station, df_name='train'):
     #print(station, ' ','min', np.nanmin(df2['max']), 'max',  np.nanmax(df2['max']))
 
     sanity_check(df2)
-    
     df2.sort_values(by='timestamp', inplace=True)
     
     #mean= np.mean(df2['max'].to_numpy())
@@ -89,17 +96,18 @@ def create_sets(station, df_name='train'):
     
     #df2.loc[abs(df2['max'].to_numpy/data/users/tobou/verification()/data/users/tobou/verification-mean)>3*std, 'max'] = np.nan #TODO: make it local
 
-    df2.dropna(subset=['max'],inplace=True)
+    df2.dropna(subset=['min'],inplace=True)
     
     
     x=df2['timestamp']
-    y=df2['max']
+    y=df2['min']
 
     x = x.to_numpy('datetime64[m]')
     y = y.to_numpy()
-
+    
     f= interp1d(x, y, kind='cubic', fill_value='extrapolate' )
     f=wrapper(f)
     del(df2)
     return x, f
 
+#create_sets(6111.0)
